@@ -1,0 +1,123 @@
+# =========================================================================
+#  Jekyll + Minimal Mistakes 主配置
+#  主题文档: https://mmistakes.github.io/minimal-mistakes/docs/configuration/
+#  本地预览: bundle exec jekyll serve
+# =========================================================================
+
+# ------------------------- 主题 -------------------------
+minimal_mistakes_skin: "default" # air, aqua, contrast, dark, dirt, mint, neon, plum, sunrise
+locale: "zh-CN" # 界面语言 + <html lang>
+remote_theme: "mmistakes/minimal-mistakes@4.28.1" # 构建时自动拉取主题，仓库里不用放主题文件
+
+# ------------------------- 站点信息 -------------------------
+title: "Scotws's Blogs"
+title_separator: "-"
+name: "Scotws"
+description: "个人技术笔记与折腾记录。"
+url: "https://hahaws.github.io"
+baseurl: ""
+repository: "hahaws/hahaws.github.io"
+
+# ------------------------- 作者（侧边栏） -------------------------
+author:
+  name: "Scotws"
+  bio: "记录一些折腾过程的笔记。"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/hahaws"
+
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/hahaws"
+
+# ------------------------- 外观 -------------------------
+breadcrumbs: false
+words_per_minute: 200
+
+# ------------------------- 文件处理 -------------------------
+include:
+  - _pages
+
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+
+# ------------------------- 输出 / 分页 -------------------------
+# 保持和旧 Hugo 站一致的 URL 结构：/posts/<文件名的日期>-<标题>/ ，已有链接不会失效
+permalink: /posts/:year-:month-:day-:title/
+paginate: 5
+paginate_path: "/page:num/"
+timezone: Asia/Shanghai
+
+# ------------------------- 插件 -------------------------
+plugins:
+  - jekyll-remote-theme # 拉取上面的 remote_theme
+  - jekyll-paginate # 首页分页
+  - jekyll-sitemap # sitemap.xml
+  - jekyll-feed # feed.xml
+  - jekyll-gist
+  - jekyll-include-cache # 主题必须
+
+# ------------------------- 分类 / 标签聚合页 -------------------------
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+# ------------------------- Markdown / 代码高亮 -------------------------
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  enable_coderay: false
+
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# ------------------------- 默认值 -------------------------
+defaults:
+  # 所有文章：single 布局 + 自动目录
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: false
+      comments: false
+      share: false
+      related: false
+      toc: true
+      toc_sticky: true
+      toc_label: "目录"
+
+  # _pages 目录下的独立页面
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+
+# ------------------------- HTML 压缩 -------------------------
+compress_html:
+  clippings: all
+  ignore:
+    envs: development

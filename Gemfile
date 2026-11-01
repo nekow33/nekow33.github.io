@@ -1,0 +1,23 @@
+source "https://rubygems.org"
+
+# Jekyll 4 现代栈（本地 Ruby 3.4 与 GitHub Actions 用同一套，构建结果一致）
+gem "jekyll", "~> 4.4"
+
+# 主题从 GitHub 拉取（_config.yml 里的 remote_theme）
+gem "jekyll-remote-theme"
+
+# 与 Minimal Mistakes 配套的官方插件
+gem "jekyll-paginate" # 首页分页
+gem "jekyll-sitemap" # sitemap.xml
+gem "jekyll-feed" # feed.xml
+gem "jekyll-gist"
+gem "jekyll-include-cache" # 主题必须
+
+# Ruby 3.x 不再内置 webrick，`jekyll serve` 需要它
+gem "webrick", "~> 1.8"
+
+# Ruby 3.4 起 csv / logger / bigdecimal 从默认 gem 降级为 bundled gem，
+# 依赖链里仍有 require，这里显式声明以保证本地能跑
+gem "csv"
+gem "logger"
+gem "bigdecimal"
