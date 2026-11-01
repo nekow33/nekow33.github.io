@@ -11,8 +11,9 @@ concurrency:
   group: pages-deploy
   cancel-in-progress: true
 
+# 用内置 GITHUB_TOKEN 推 publish 分支，不再依赖个人 PAT
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -32,11 +33,10 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - name: Deploy to hahaws.github.io repo
+      - name: Deploy to publish branch
         uses: peaceiris/actions-gh-pages@v4
         with:
-          external_repository: hahaws/hahaws.github.io
-          personal_token: ${{ secrets.BLOG_GENERATE }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           publish_branch: publish
           user_name: github-actions[bot]

@@ -14,9 +14,9 @@ title: "Scotws's Blogs"
 title_separator: "-"
 name: "Scotws"
 description: "个人技术笔记与折腾记录。"
-url: "https://hahaws.github.io"
+url: "https://nekow33.github.io"
 baseurl: ""
-repository: "hahaws/hahaws.github.io"
+repository: "nekow33/nekow33.github.io"
 
 # ------------------------- 作者（侧边栏） -------------------------
 author:
@@ -25,13 +25,13 @@ author:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/hahaws"
+      url: "https://github.com/nekow33"
 
 footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/hahaws"
+      url: "https://github.com/nekow33"
 
 # ------------------------- 外观 -------------------------
 breadcrumbs: false
