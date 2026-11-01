@@ -2,8 +2,8 @@
 
 https://nekow33.github.io
 
-个人博客。**Jekyll 4 + [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/)** 主题，
-GitHub Actions 构建后推送到本仓库的 `publish` 分支，Pages 直接从该分支发布。
+个人博客。**Jekyll 4 + 自带的极简纯文本主题**（layout 和 CSS 都在本仓库里，没有任何第三方主题依赖）：
+等宽字体、白底黑字、窄栏、蓝色下划线链接、已访问链接变紫，文章页左侧固定目录。
 
 > 注：GitHub 账号已从 `hahaws` 改名为 `nekow33`，所以站点地址从 `https://hahaws.github.io`
 > 变成了 `https://nekow33.github.io`。仓库原名 `hahaws.github.io`，已改名为 `nekow33.github.io`
@@ -12,18 +12,25 @@ GitHub Actions 构建后推送到本仓库的 `publish` 分支，Pages 直接从
 ## 目录结构
 
 ```
-├── _config.yml                 # 站点主配置（标题、主题、插件、分类/标签、目录等）
+├── _config.yml                 # 站点配置（标题、分页、Markdown、默认 layout）
 ├── Gemfile / Gemfile.lock      # Ruby 依赖（锁版本，保证本地与 CI 一致）
 ├── index.html                  # 首页（layout: home，自动分页）
 ├── 404.md                      # 404 页面
-├── _data/
-│   ├── navigation.yml          # 顶部导航菜单
-│   └── ui-text.yml             # 主题界面文案（含简繁中文）
-├── _includes/head/custom.html  # 自定义 <head>，MathJax 按文章开关
+├── _data/navigation.yml        # 顶部导航菜单
+├── _layouts/
+│   ├── default.html            # 页面骨架：head、页头导航、页脚
+│   ├── home.html               # 首页：文章列表 + 分页
+│   ├── post.html               # 文章页：日期/分类/标签、目录、上下篇
+│   ├── page.html               # 普通页面（404 等）
+│   └── taxonomy.html           # 分类页 / 标签页共用
 ├── _pages/
 │   ├── categories.md           # /categories/ 分类聚合页
 │   └── tags.md                 # /tags/ 标签聚合页
 ├── _posts/                     # 文章：YYYY-MM-DD-标题.md
+├── assets/
+│   ├── css/main.css            # 主题样式（配色改这里的 CSS 变量）
+│   ├── css/syntax.css          # rouge 代码高亮配色
+│   └── js/toc.js               # 从正文 h2/h3 生成左侧目录
 └── .github/workflows/
     └── generate_pages.yml      # 构建 + 部署流水线
 ```
@@ -39,8 +46,7 @@ bundle exec jekyll serve
 ```
 
 > Gemfile 里显式声明了 `csv` / `logger` / `bigdecimal`，因为 Ruby 3.4 把它们从默认 gem
-> 降级为 bundled gem，不声明会导致 Jekyll 起不来。构建时 MM 自带的 SCSS 会刷一堆
-> `@import is deprecated` 警告，不影响产物，可以忽略。
+> 降级为 bundled gem，不声明会导致 Jekyll 起不来。
 
 ## 日常发布流程（三步）
 
@@ -58,13 +64,13 @@ git push
 ```
 
 推送后 GitHub Actions 自动：`bundle exec jekyll build` → 把 `_site/` 推到 `publish` 分支 →
-Pages 发布，约 1~2 分钟生效。
+Pages 发布，约 1 分钟生效。
 
 **仓库只需一次性配置**（已完成过就不用管）：
 
 - Settings → Pages → Source 选 *Deploy from a branch*，Branch 选 `publish` / `/ (root)`
-- Settings → Actions → General → Workflow permissions 勾上 *Read and write permissions*
-  （部署步骤要用 `GITHUB_TOKEN` 推 `publish` 分支；不再需要个人 PAT 和 Secret）
+- Settings → Actions → General → Workflow permissions 选 *Read and write permissions*
+  （部署步骤用内置 `GITHUB_TOKEN` 推 `publish` 分支，不需要个人 PAT）
 
 ## 写一篇新文章
 
@@ -86,20 +92,16 @@ tags:
 正文……
 ```
 
-- **分类 categories**：一篇放一个（或少数几个），会出现在 `/categories/` 聚合页和文章页顶部。
-  聚合页里每个分类是一个锚点区块，文章页的分类链接会直接跳到对应位置。
+- **分类 categories**：一篇放一个（或少数几个），出现在 `/categories/` 聚合页和文章页顶部。
 - **标签 tags**：可放多个，同样出现在 `/tags/` 聚合页和文章页顶部。
-- **目录 TOC**：`_config.yml` 的 `defaults` 已全局开启（`toc: true`、`toc_sticky: true`），
-  正文里用 `##` / `###` 自动生成右侧目录；单篇想关掉就写 `toc: false`。
+- **目录 TOC**：默认开启（`_config.yml` 的 `defaults` 里 `toc: true`），由 `assets/js/toc.js`
+  从正文的 `##` / `###` 生成；单篇想关掉就写 `toc: false`。
 - **代码高亮**：三个反引号围栏，可加语言名（如 ```python），由 rouge 渲染。
 - **草稿**：front matter 里写 `published: false` 就不发布。
 - **公式**：front matter 里写 `mathjax: true` 才会加载 MathJax。
 
-## 换配色 / 改站点信息
+## 改外观
 
-- 配色：改 `_config.yml` 里的 `minimal_mistakes_skin`，
-  可选 `air` / `aqua` / `contrast` / `dark` / `dirt` / `mint` / `neon` / `plum` / `sunrise`。
-- 标题、简介、作者、社交链接：`_config.yml` 的 `title` / `description` / `author` / `footer`。
+- 配色/字体：`assets/css/main.css` 顶部的 `:root` 变量（`--fg` / `--bg` / `--link` / `--visited` / `--rule` / `--code-bg`）。
+- 标题、简介、作者：`_config.yml` 的 `title` / `description` / `author`。
 - 顶部菜单：`_data/navigation.yml`。
-
-`_config.yml` 里的 `url` / `baseurl` 必须和实际域名一致（用户站挂在根路径，`baseurl: ""`）。

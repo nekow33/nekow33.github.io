@@ -1,0 +1,129 @@
+/* =========================================================
+   极简纯文本主题：等宽字体、白底黑字、窄栏、无侧边栏
+   ========================================================= */
+
+:root {
+  --fg: #212121;
+  --bg: #ffffff;
+  --muted: #666666;
+  --link: #0000cc;
+  --visited: #7a1f8b;
+  --rule: #cccccc;
+  --code-bg: #f2f2f2;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 1rem;
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+
+.wrap {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+/* ---------- 链接：经典下划线 + 已访问变紫 ---------- */
+a { color: var(--link); text-decoration: underline; }
+a:visited { color: var(--visited); }
+a:hover { background: #ffffcc; }
+
+/* ---------- 页头 ---------- */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  margin-bottom: 2.5rem;
+}
+.site-title { color: var(--fg); font-weight: bold; text-decoration: none; }
+.site-title:visited { color: var(--fg); }
+.site-nav a { margin-left: 1rem; }
+.site-nav a:first-child { margin-left: 0; }
+
+/* ---------- 标题与正文 ---------- */
+h1 { font-size: 1.45rem; margin: 0 0 1rem; }
+h2 { font-size: 1.2rem; margin: 2rem 0 .75rem; }
+h3 { font-size: 1.05rem; margin: 1.5rem 0 .5rem; }
+h4, h5, h6 { font-size: 1rem; margin: 1rem 0 .5rem; }
+
+p, ul, ol, dl, table, blockquote, pre { margin: 1rem 0; }
+ul, ol { padding-left: 1.6rem; }
+li { margin: .25rem 0; }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
+
+/* ---------- 代码 ---------- */
+code {
+  font-family: inherit;
+  background: var(--code-bg);
+  padding: .1em .25em;
+  font-size: .95em;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  padding: .75rem 1rem;
+  overflow-x: auto;
+  line-height: 1.45;
+}
+pre code { background: none; padding: 0; }
+
+/* ---------- 引用与表格 ---------- */
+blockquote {
+  margin: 1rem 0;
+  padding: .25rem 1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+  font-style: italic;
+}
+
+table { border-collapse: collapse; }
+th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+th { background: var(--code-bg); }
+
+img { max-width: 100%; height: auto; }
+
+/* ---------- 文章列表 / 元信息 ---------- */
+.post-list { list-style: none; padding: 0; }
+.post-list li { margin: .4rem 0; }
+.post-date { display: inline-block; min-width: 6.5rem; }
+.post-date, .meta, .count, .pager, .index-list { color: var(--muted); font-size: .9rem; }
+.meta { margin-bottom: 2rem; }
+.pager { margin-top: 2rem; }
+.pager-next { float: right; }
+
+/* ---------- 目录：宽屏固定左侧，窄屏在正文上方 ---------- */
+.toc {
+  font-size: .85rem;
+  color: var(--muted);
+  margin: 0 0 2rem;
+}
+.toc .toc-title { margin: 0 0 .35rem; color: var(--fg); }
+.toc ul { list-style: none; padding-left: 0; margin: 0; }
+.toc li { margin: .2rem 0; }
+.toc .toc-h3 { padding-left: 1rem; }
+
+@media (min-width: 78rem) {
+  .toc {
+    position: fixed;
+    top: 2.5rem;
+    left: 1.5rem;
+    max-width: 15rem;
+    margin: 0;
+  }
+}
+
+/* ---------- 页脚 ---------- */
+.site-footer { margin-top: 3rem; color: var(--muted); font-size: .85rem; }
+.site-footer p { margin: 0; }
