@@ -1,0 +1,65 @@
+/* rouge 代码高亮的极简配色（旧式编辑器风格） */
+
+.highlight .c,
+.highlight .c1,
+.highlight .cm,
+.highlight .cs,
+.highlight .cd { color: #808080; font-style: italic; }
+
+.highlight .k,
+.highlight .kc,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr { color: #0000bb; font-weight: bold; }
+
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sr,
+.highlight .ss { color: #a31515; }
+
+.highlight .m,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il { color: #098658; }
+
+.highlight .nf,
+.highlight .fm,
+.highlight .nb,
+.highlight .bp { color: #795e26; }
+
+.highlight .nc,
+.highlight .nn,
+.highlight .ne,
+.highlight .no,
+.highlight .na { color: #267f99; }
+
+.highlight .nt { color: #800000; }
+
+.highlight .nv,
+.highlight .vi,
+.highlight .vg { color: #001080; }
+
+.highlight .o,
+.highlight .ow,
+.highlight .p,
+.highlight .pi { color: #212121; }
+
+.highlight .gh,
+.highlight .gu { color: #795e26; font-weight: bold; }
+.highlight .gd { color: #a31515; }
+.highlight .gi { color: #098658; }
+.highlight .err { color: #a31515; }
+
+/* 输出里若混入行号/表格包裹，保持朴素 */
+.highlight table td { padding: 0; border: 0; }
+.highlight table pre { margin: 0; }
