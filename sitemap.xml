@@ -1,1 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url><loc>https://example.org/posts/</loc><lastmod>2022-08-26T22:28:10+08:00</lastmod></url><url><loc>https://example.org/posts/test-tex/</loc><lastmod>2022-08-26T22:28:10+08:00</lastmod></url><url><loc>https://example.org/</loc><lastmod>2022-08-25T21:30:04+08:00</lastmod></url><url><loc>https://example.org/categories/</loc></url><url><loc>https://example.org/tags/</loc></url><url><loc>https://example.org/posts/2024-10-03-github-page-hugo/</loc></url></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://nekow33.github.io/posts/2024-10-03-github-page-hugo/</loc>
+<lastmod>2024-10-03T12:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>https://nekow33.github.io/categories/</loc>
+</url>
+<url>
+<loc>https://nekow33.github.io/</loc>
+</url>
+<url>
+<loc>https://nekow33.github.io/tags/</loc>
+</url>
+</urlset>
