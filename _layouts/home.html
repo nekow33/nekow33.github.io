@@ -1,26 +1,14 @@
 ---
 layout: default
 ---
-{%- if paginator -%}
-  {%- assign posts = paginator.posts -%}
-{%- else -%}
-  {%- assign posts = site.posts -%}
-{%- endif -%}
+{%- assign items = site.articles | sort: "date" | reverse -%}
 
 {{ content }}
 
 <ul class="post-list">
-  {%- for post in posts %}
+  {%- for item in items %}
   <li>
-    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
   </li>
   {%- endfor %}
 </ul>
-
-{%- if paginator and paginator.total_pages > 1 %}
-<p class="pager">
-  {%- if paginator.previous_page %}<a href="{{ paginator.previous_page_path | relative_url }}">&larr; 较新</a> {% endif -%}
-  <span>第 {{ paginator.page }} / {{ paginator.total_pages }} 页</span>
-  {%- if paginator.next_page %} <a href="{{ paginator.next_page_path | relative_url }}">较旧 &rarr;</a>{% endif -%}
-</p>
-{%- endif %}

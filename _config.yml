@@ -3,13 +3,22 @@
 #  本地预览: bundle exec jekyll serve
 # =========================================================================
 
-title: "Nekow33Blooooooooooooog"
-description: ""
-author: "Nekow33"
+title: "Scotws's Blogs"
+description: "个人技术笔记与折腾记录。"
+author: "Scotws"
 lang: "zh-CN"
 
 url: "https://nekow33.github.io"
 baseurl: ""
+
+# ------------------------- 文章目录 -------------------------
+# 文章放在 _articles/ 下，文件名不需要带日期（不像 _posts 那样强制 YYYY-MM-DD-）
+# URL 规则：/posts/<文件名>/
+collections:
+  articles:
+    output: true
+    permalink: /posts/:name/
+    sort_by: date
 
 # ------------------------- 文件处理 -------------------------
 include:
@@ -23,18 +32,11 @@ exclude:
   - vendor
   - node_modules
 
-# ------------------------- 输出 / 分页 -------------------------
-# 与旧 Hugo 站一致的 URL 结构：/posts/<文件名的日期>-<标题>/
-permalink: /posts/:year-:month-:day-:title/
-paginate: 5
-paginate_path: "/page:num/"
 timezone: Asia/Shanghai
 
 # ------------------------- 插件 -------------------------
 plugins:
-  - jekyll-paginate
   - jekyll-sitemap
-  - jekyll-feed
 
 # ------------------------- Markdown / 代码高亮 -------------------------
 markdown: kramdown
@@ -53,10 +55,10 @@ kramdown:
 defaults:
   - scope:
       path: ""
-      type: posts
+      type: articles
     values:
       layout: post
-      toc: true # 文章默认生成右侧目录，单篇可写 toc: false 关掉
+      toc: true # 默认生成左侧目录，单篇可写 toc: false 关掉
   - scope:
       path: "_pages"
       type: pages

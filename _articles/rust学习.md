@@ -1,5 +1,6 @@
 ---
 title: Rust学习
+date: 2026-11-03 21:00:00 +0800
 categories:
   - Rust
 ---

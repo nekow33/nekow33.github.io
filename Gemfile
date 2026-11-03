@@ -1,11 +1,9 @@
 source "https://rubygems.org"
 
-# 极简方案：Jekyll 4 + 三个官方插件，无第三方主题依赖
+# 极简方案：Jekyll 4 + 官方插件，无第三方主题依赖
 gem "jekyll", "~> 4.4"
 
-gem "jekyll-paginate" # 首页分页
 gem "jekyll-sitemap" # sitemap.xml
-gem "jekyll-feed" # feed.xml
 
 # Ruby 3.x 不再内置 webrick，`jekyll serve` 需要它
 gem "webrick", "~> 1.8"
