@@ -32,15 +32,6 @@
     <main>
       {{ content }}
     </main>
-
-    <footer class="site-footer">
-      <hr>
-      <p>
-        &copy; {{ site.time | date: "%Y" }} {{ site.author | default: site.title }}
-        &middot; <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
-        &middot; <a href="{{ '/sitemap.xml' | relative_url }}">Sitemap</a>
-      </p>
-    </footer>
   </div>
 </body>
 </html>

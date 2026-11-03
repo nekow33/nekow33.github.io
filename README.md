@@ -16,16 +16,14 @@ https://nekow33.github.io
 ├── Gemfile / Gemfile.lock      # Ruby 依赖（锁版本，保证本地与 CI 一致）
 ├── index.html                  # 首页（layout: home，自动分页）
 ├── 404.md                      # 404 页面
-├── _data/navigation.yml        # 顶部导航菜单
+├── _data/navigation.yml        # 顶部导航菜单（首页 / 分类）
 ├── _layouts/
-│   ├── default.html            # 页面骨架：head、页头导航、页脚
+│   ├── default.html            # 页面骨架：head、页头导航
 │   ├── home.html               # 首页：文章列表 + 分页
-│   ├── post.html               # 文章页：日期/分类/标签、目录、上下篇
+│   ├── post.html               # 文章页：日期、分类、目录、上下篇
 │   ├── page.html               # 普通页面（404 等）
-│   └── taxonomy.html           # 分类页 / 标签页共用
-├── _pages/
-│   ├── categories.md           # /categories/ 分类聚合页
-│   └── tags.md                 # /tags/ 标签聚合页
+│   └── taxonomy.html           # 分类页
+├── _pages/categories.md        # /categories/ 分类聚合页
 ├── _posts/                     # 文章：YYYY-MM-DD-标题.md
 ├── assets/
 │   ├── css/main.css            # 主题样式（配色改这里的 CSS 变量）
@@ -82,9 +80,6 @@ title: "文章标题"
 date: 2025-01-01 10:00:00 +0800
 categories:
   - 建站
-tags:
-  - Jekyll
-  - GitHub Pages
 ---
 
 ## 一级小节
@@ -93,7 +88,7 @@ tags:
 ```
 
 - **分类 categories**：一篇放一个（或少数几个），出现在 `/categories/` 聚合页和文章页顶部。
-- **标签 tags**：可放多个，同样出现在 `/tags/` 聚合页和文章页顶部。
+  聚合页里每个分类是一个锚点区块，文章页的分类链接会直接跳到对应位置。
 - **目录 TOC**：默认开启（`_config.yml` 的 `defaults` 里 `toc: true`），由 `assets/js/toc.js`
   从正文的 `##` / `###` 生成；单篇想关掉就写 `toc: false`。
 - **代码高亮**：三个反引号围栏，可加语言名（如 ```python），由 rouge 渲染。
