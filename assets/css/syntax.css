@@ -1,65 +1,123 @@
-/* rouge 代码高亮的极简配色（旧式编辑器风格） */
+.highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight, .highlight .w {
+  color: #24292f;
+  background-color: #f6f8fa;
+}
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt, .highlight .kv {
+  color: #cf222e;
+}
+.highlight .gr {
+  color: #f6f8fa;
+}
+.highlight .gd {
+  color: #82071e;
+  background-color: #ffebe9;
+}
+.highlight .nb {
+  color: #953800;
+}
+.highlight .nc {
+  color: #953800;
+}
+.highlight .no {
+  color: #953800;
+}
+.highlight .nn {
+  color: #953800;
+}
+.highlight .sr {
+  color: #116329;
+}
+.highlight .na {
+  color: #116329;
+}
+.highlight .nt {
+  color: #116329;
+}
+.highlight .gi {
+  color: #116329;
+  background-color: #dafbe1;
+}
+.highlight .ges {
+  font-weight: bold;
+  font-style: italic;
+}
+.highlight .kc {
+  color: #0550ae;
+}
+.highlight .l, .highlight .ld, .highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mx {
+  color: #0550ae;
+}
+.highlight .sb {
+  color: #0550ae;
+}
+.highlight .bp {
+  color: #0550ae;
+}
+.highlight .ne {
+  color: #0550ae;
+}
+.highlight .nl {
+  color: #0550ae;
+}
+.highlight .py {
+  color: #0550ae;
+}
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi, .highlight .vm {
+  color: #0550ae;
+}
+.highlight .o, .highlight .ow {
+  color: #0550ae;
+}
+.highlight .gh {
+  color: #0550ae;
+  font-weight: bold;
+}
+.highlight .gu {
+  color: #0550ae;
+  font-weight: bold;
+}
+.highlight .s, .highlight .sa, .highlight .sc, .highlight .dl, .highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .sx, .highlight .s1, .highlight .ss {
+  color: #0a3069;
+}
+.highlight .nd {
+  color: #8250df;
+}
+.highlight .nf, .highlight .fm {
+  color: #8250df;
+}
+.highlight .err {
+  color: #f6f8fa;
+  background-color: #82071e;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cm, .highlight .cp, .highlight .cpf, .highlight .c1, .highlight .cs {
+  color: #6e7781;
+}
+.highlight .gl {
+  color: #6e7781;
+}
+.highlight .gt {
+  color: #6e7781;
+}
+.highlight .ni {
+  color: #24292f;
+}
+.highlight .si {
+  color: #24292f;
+}
+.highlight .ge {
+  color: #24292f;
+  font-style: italic;
+}
+.highlight .gs {
+  color: #24292f;
+  font-weight: bold;
+}
 
-.highlight .c,
-.highlight .c1,
-.highlight .cm,
-.highlight .cs,
-.highlight .cd { color: #808080; font-style: italic; }
-
-.highlight .k,
-.highlight .kc,
-.highlight .kd,
-.highlight .kn,
-.highlight .kp,
-.highlight .kr { color: #0000bb; font-weight: bold; }
-
-.highlight .s,
-.highlight .s1,
-.highlight .s2,
-.highlight .sb,
-.highlight .sc,
-.highlight .sd,
-.highlight .se,
-.highlight .sh,
-.highlight .si,
-.highlight .sr,
-.highlight .ss { color: #a31515; }
-
-.highlight .m,
-.highlight .mf,
-.highlight .mh,
-.highlight .mi,
-.highlight .mo,
-.highlight .il { color: #098658; }
-
-.highlight .nf,
-.highlight .fm,
-.highlight .nb,
-.highlight .bp { color: #795e26; }
-
-.highlight .nc,
-.highlight .nn,
-.highlight .ne,
-.highlight .no,
-.highlight .na { color: #267f99; }
-
-.highlight .nt { color: #800000; }
-
-.highlight .nv,
-.highlight .vi,
-.highlight .vg { color: #001080; }
-
-.highlight .o,
-.highlight .ow,
-.highlight .p,
-.highlight .pi { color: #212121; }
-
-.highlight .gh,
-.highlight .gu { color: #795e26; font-weight: bold; }
-.highlight .gd { color: #a31515; }
-.highlight .gi { color: #098658; }
-.highlight .err { color: #a31515; }
-
-/* 输出里若混入行号/表格包裹，保持朴素 */
+/* ---- 本站覆盖：背景与边框跟主题一致 ---- */
+.highlight { background: #f6f8fa; }
+.highlight pre { background: #f6f8fa; }
+.highlight table { border-collapse: collapse; }
 .highlight table td { padding: 0; border: 0; }
 .highlight table pre { margin: 0; }

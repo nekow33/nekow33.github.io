@@ -9,7 +9,8 @@
   --link: #0000cc;
   --visited: #7a1f8b;
   --rule: #cccccc;
-  --code-bg: #f2f2f2;
+  --code-bg: #f6f8fa;
+  --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 * { box-sizing: border-box; }
@@ -20,7 +21,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: var(--mono);
   font-size: 1rem;
   line-height: 1.55;
   overflow-wrap: break-word;
@@ -63,21 +64,63 @@ li { margin: .25rem 0; }
 
 hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
-/* ---------- 代码 ---------- */
+/* ---------- 行内代码 ---------- */
 code {
-  font-family: inherit;
+  font-family: var(--mono);
   background: var(--code-bg);
-  padding: .1em .25em;
-  font-size: .95em;
+  color: #24292e;
+  padding: .1em .3em;
+  font-size: .9em;
+  border: 1px solid #e1e4e8;
 }
+
+/* ---------- 代码块 ---------- */
 pre {
   background: var(--code-bg);
-  border: 1px solid var(--rule);
-  padding: .75rem 1rem;
+  border: 1px solid #e1e4e8;
+  padding: 1rem 1.1rem;
   overflow-x: auto;
-  line-height: 1.45;
+  line-height: 1.5;
+  tab-size: 4;
 }
-pre code { background: none; padding: 0; }
+pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: .875rem;
+  color: inherit;
+}
+.highlight {
+  position: relative;
+  background: var(--code-bg);
+  border: 1px solid #e1e4e8;
+  margin: 1rem 0;
+}
+.highlight pre {
+  margin: 0;
+  background: var(--code-bg);
+  border: 0;
+}
+.highlight table { margin: 0; }
+.highlight table td { padding: 0; border: 0; }
+.highlight table pre { margin: 0; }
+
+/* 复制按钮 */
+.copy-btn {
+  position: absolute;
+  top: .4rem;
+  right: .4rem;
+  font-family: var(--mono);
+  font-size: .7rem;
+  line-height: 1.4;
+  color: var(--muted);
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  padding: .05rem .4rem;
+  cursor: pointer;
+}
+.copy-btn:hover { color: var(--fg); background: #ffffcc; }
+.copy-btn.copied { color: #116329; border-color: #116329; }
 
 /* ---------- 引用与表格 ---------- */
 blockquote {
@@ -97,8 +140,7 @@ img { max-width: 100%; height: auto; }
 /* ---------- 文章列表 / 元信息 ---------- */
 .post-list { list-style: none; padding: 0; }
 .post-list li { margin: .4rem 0; }
-.post-date { display: inline-block; min-width: 6.5rem; }
-.post-date, .meta, .count, .pager, .index-list { color: var(--muted); font-size: .9rem; }
+.meta, .pager, .index-list { color: var(--muted); font-size: .9rem; }
 .meta { margin-bottom: 2rem; }
 .pager { margin-top: 2rem; }
 .pager-next { float: right; }
@@ -123,7 +165,3 @@ img { max-width: 100%; height: auto; }
     margin: 0;
   }
 }
-
-/* ---------- 页脚 ---------- */
-.site-footer { margin-top: 3rem; color: var(--muted); font-size: .85rem; }
-.site-footer p { margin: 0; }
