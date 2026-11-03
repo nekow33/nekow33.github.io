@@ -1,4 +1,738 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://nekow33.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://nekow33.github.io/" rel="alternate" type="text/html" hreflang="zh-CN" /><updated>2026-11-03T23:07:52+08:00</updated><id>https://nekow33.github.io/feed.xml</id><title type="html">Scotws&apos;s Blogs</title><subtitle>个人技术笔记与折腾记录。</subtitle><author><name>Scotws</name></author><entry><title type="html">使用 Github Pages 和 Hugo 搭建个人博客</title><link href="https://nekow33.github.io/posts/2024-10-03-github-page-hugo/" rel="alternate" type="text/html" title="使用 Github Pages 和 Hugo 搭建个人博客" /><published>2024-10-03T12:00:00+08:00</published><updated>2024-10-03T12:00:00+08:00</updated><id>https://nekow33.github.io/posts/github-page-hugo</id><content type="html" xml:base="https://nekow33.github.io/posts/2024-10-03-github-page-hugo/"><![CDATA[<h2 id="一创建一个github-pages类型的repo">一、创建一个Github Pages类型的Repo</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://nekow33.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://nekow33.github.io/" rel="alternate" type="text/html" hreflang="zh-CN" /><updated>2026-11-03T23:11:08+08:00</updated><id>https://nekow33.github.io/feed.xml</id><title type="html">Scotws&apos;s Blogs</title><subtitle>个人技术笔记与折腾记录。</subtitle><author><name>Scotws</name></author><entry><title type="html">Rust学习</title><link href="https://nekow33.github.io/posts/2026-11-03-rust%E5%AD%A6%E4%B9%A0/" rel="alternate" type="text/html" title="Rust学习" /><published>2026-11-03T00:00:00+08:00</published><updated>2026-11-03T00:00:00+08:00</updated><id>https://nekow33.github.io/posts/rust%E5%AD%A6%E4%B9%A0</id><content type="html" xml:base="https://nekow33.github.io/posts/2026-11-03-rust%E5%AD%A6%E4%B9%A0/"><![CDATA[<h2 id="模块-a所有权系统的地基">模块 A：所有权系统的地基</h2>
+
+<h3 id="a1-所有权与-move">A1. 所有权与 Move</h3>
+
+<h4 id="内容介绍">内容介绍</h4>
+
+<p>所有权是 Rust 内存管理的核心规则集：每个值有唯一所有者；所有者离开作用域时值被 <code class="language-plaintext highlighter-rouge">drop</code>；所有权可以<strong>移动（move）</strong>，但移动后原变量不可再用。</p>
+
+<h4 id="详细描述">详细描述</h4>
+
+<ul>
+  <li><strong>栈与堆的分工</strong>：大小固定的数据默认在栈上；大小未知或可变的数据在堆上，栈上只存指针。</li>
+  <li><strong>Move 的本质</strong>：对于非 <code class="language-plaintext highlighter-rouge">Copy</code> 类型（如 <code class="language-plaintext highlighter-rouge">String</code>、<code class="language-plaintext highlighter-rouge">Vec</code>），赋值或传参时堆数据的<strong>所有权指针</strong>被转移，原变量被编译器标记为“已移动”。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Copy</code> 的例外</strong>：所有字段都是 <code class="language-plaintext highlighter-rouge">Copy</code> 的类型可以标记 <code class="language-plaintext highlighter-rouge">#[derive(Copy, Clone)]</code>，赋值时按位复制，不触发移动。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Clone</code> 不是 <code class="language-plaintext highlighter-rouge">Copy</code></strong>：<code class="language-plaintext highlighter-rouge">clone()</code> 是显式的深拷贝，适用于需要保留原值的场景。</li>
+</ul>
+
+<h4 id="代码示例">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Debug)]</span>
+<span class="k">struct</span> <span class="n">MyStruct</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="nb">u32</span> <span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">MyStruct</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="mi">5</span> <span class="p">};</span>
+    <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>          <span class="c1">// move：x 的所有权转移给 y</span>
+    <span class="c1">// println!("{:?}", x); // ❌ 编译错误 E0382：x 已被移动</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span> <span class="c1">// ✅ y 有效</span>
+
+    <span class="k">let</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1_i32</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>           <span class="c1">// i32 是 Copy，a 仍然可用</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{a} {b}"</span><span class="p">);</span> <span class="c1">// ✅</span>
+
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"many"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="nf">.clone</span><span class="p">();</span> <span class="c1">// 显式深拷贝</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{s1} {s2}"</span><span class="p">);</span> <span class="c1">// ✅</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑">常见坑</h4>
+
+<ul>
+  <li>把非 <code class="language-plaintext highlighter-rouge">Copy</code> 类型传给函数后继续使用原变量：报 <strong>E0382 “use of moved value”</strong>。</li>
+  <li>试图给含 <code class="language-plaintext highlighter-rouge">String</code> 字段的结构体加 <code class="language-plaintext highlighter-rouge">#[derive(Copy)]</code>：如果字段不是 <code class="language-plaintext highlighter-rouge">Copy</code>，编译失败。</li>
+  <li>在循环中反复 <code class="language-plaintext highlighter-rouge">clone()</code> 大对象：能借用就借用，<code class="language-plaintext highlighter-rouge">clone()</code> 是性能陷阱。</li>
+</ul>
+
+<hr />
+
+<h3 id="a2-引用与借用">A2. 引用与借用</h3>
+
+<h4 id="内容介绍-1">内容介绍</h4>
+
+<p><strong>引用（reference）</strong> 是不获取所有权而访问值的方式；<strong>借用（borrowing）</strong> 是使用引用的行为。<code class="language-plaintext highlighter-rouge">&amp;T</code> 是不可变借用，<code class="language-plaintext highlighter-rouge">&amp;mut T</code> 是可变借用。</p>
+
+<h4 id="详细描述-1">详细描述</h4>
+
+<ul>
+  <li><strong>借用规则（核心）</strong>：在任意时刻，对同一数据只能存在<strong>一个可变引用</strong>，<strong>或任意多个不可变引用</strong>，二者不能同时存在。</li>
+  <li><strong>不可变借用默认只读</strong>：通过 <code class="language-plaintext highlighter-rouge">&amp;T</code> 不能修改数据，即使原变量是 <code class="language-plaintext highlighter-rouge">mut</code> 的。</li>
+  <li><strong>可变借用需要 <code class="language-plaintext highlighter-rouge">&amp;mut</code></strong>：创建 <code class="language-plaintext highlighter-rouge">&amp;mut T</code> 要求原变量本身是 <code class="language-plaintext highlighter-rouge">mut</code> 的。</li>
+  <li><strong>引用的作用域</strong>：引用的有效范围不能超过被借用值的生命周期——这是编译器在函数签名层面检查的，日常编码中大多由借用规则隐式保证。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Deref</code> 强制转换</strong>：<code class="language-plaintext highlighter-rouge">&amp;String</code> 可以自动强转为 <code class="language-plaintext highlighter-rouge">&amp;str</code>，<code class="language-plaintext highlighter-rouge">&amp;Vec&lt;T&gt;</code> 可以强转为 <code class="language-plaintext highlighter-rouge">&amp;[T]</code>，这是很多 API 接受 <code class="language-plaintext highlighter-rouge">&amp;str</code>/<code class="language-plaintext highlighter-rouge">&amp;[T]</code> 的原因。</li>
+</ul>
+
+<h4 id="代码示例-1">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">calculate_length</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">String</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span> <span class="p">{</span>
+    <span class="n">s</span><span class="nf">.len</span><span class="p">()</span>
+<span class="p">}</span> <span class="c1">// s 离开作用域，但不拥有数据，所以不会 drop 原 String</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">len</span> <span class="o">=</span> <span class="nf">calculate_length</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">);</span> <span class="c1">// 借用，s1 仍然拥有所有权</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"The length of '{}' is {}."</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span> <span class="c1">// ✅</span>
+
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="c1">// let r1 = &amp;s;</span>
+    <span class="c1">// let r2 = &amp;mut s; // ❌ 不可变借用与可变借用不能共存</span>
+    <span class="c1">// println!("{r1}");</span>
+
+    <span class="k">let</span> <span class="n">r3</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">s</span><span class="p">;</span>
+    <span class="n">r3</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">", world"</span><span class="p">);</span> <span class="c1">// ✅ 可变借用</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{s}"</span><span class="p">);</span>         <span class="c1">// ✅ r3 的借用在此前结束</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-1">常见坑</h4>
+
+<ul>
+  <li><strong>同时持有不可变和可变引用</strong>：报错“cannot borrow as mutable because it is also borrowed as immutable”。</li>
+  <li><strong>在 <code class="language-plaintext highlighter-rouge">struct</code> 中存引用</strong>：需要显式生命周期标注，这是后续智能指针要解决的场景之一。</li>
+  <li>误以为 <code class="language-plaintext highlighter-rouge">&amp;mut T</code> 只是“可变的别名”：它同时意味着<strong>排他性访问</strong>，这是 Rust 并发安全的基础。</li>
+</ul>
+
+<hr />
+
+<h3 id="a3-切片">A3. 切片</h3>
+
+<h4 id="内容介绍-2">内容介绍</h4>
+
+<p>切片（slice）是对<strong>连续序列的一部分</strong>的借用视图，类型为 <code class="language-plaintext highlighter-rouge">&amp;[T]</code> 或 <code class="language-plaintext highlighter-rouge">&amp;mut [T]</code>。它本身是一个“双字对象”：一个指针 + 一个长度。</p>
+
+<h4 id="详细描述-2">详细描述</h4>
+
+<ul>
+  <li><strong>切片的长度在运行时已知，不在类型中编码</strong>：<code class="language-plaintext highlighter-rouge">[T; N]</code> 的长度 <code class="language-plaintext highlighter-rouge">N</code> 是类型的一部分；<code class="language-plaintext highlighter-rouge">&amp;[T]</code> 的长度是值的一部分。</li>
+  <li><strong>切片不拥有数据</strong>：它借用数组、<code class="language-plaintext highlighter-rouge">Vec</code>、<code class="language-plaintext highlighter-rouge">String</code> 等底层连续存储的一部分。</li>
+  <li><strong>范围语法</strong>：<code class="language-plaintext highlighter-rouge">&amp;arr[1..4]</code> 借用索引 1、2、3 的元素；<code class="language-plaintext highlighter-rouge">..</code> 表示全体，<code class="language-plaintext highlighter-rouge">..n</code> 表示从头到 n（不含），<code class="language-plaintext highlighter-rouge">n..</code> 表示从 n 到尾。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&amp;str</code> 是字节切片</strong>：<code class="language-plaintext highlighter-rouge">&amp;str</code> 本质上是对 UTF-8 字节序列的切片，这也是字符串与切片之间的桥梁。</li>
+</ul>
+
+<h4 id="代码示例-2">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">analyze_slice</span><span class="p">(</span><span class="n">slice</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="nb">i32</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"第一个元素：{}，长度：{}"</span><span class="p">,</span> <span class="n">slice</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">slice</span><span class="nf">.len</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="nb">i32</span><span class="p">;</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+    <span class="nf">analyze_slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">xs</span><span class="p">);</span>        <span class="c1">// 整个数组借用为切片</span>
+    <span class="nf">analyze_slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">4</span><span class="p">]);</span>  <span class="c1">// 借用部分：2, 3, 4</span>
+
+    <span class="k">let</span> <span class="n">v</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">];</span>
+    <span class="k">let</span> <span class="n">mid</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">3</span><span class="p">];</span>        <span class="c1">// Vec 也可以切片</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">mid</span><span class="p">);</span>     <span class="c1">// [20, 30]</span>
+
+    <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">hello</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">[</span><span class="o">..</span><span class="p">];</span>        <span class="c1">// &amp;str，借用整个 String</span>
+    <span class="k">let</span> <span class="n">ell</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">4</span><span class="p">];</span>        <span class="c1">// "ell"</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{hello} {ell}"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-2">常见坑</h4>
+
+<ul>
+  <li><strong>越界索引</strong>：<code class="language-plaintext highlighter-rouge">xs[10]</code> 在编译期可知越界时直接编译失败；运行时越界会 panic。安全替代是 <code class="language-plaintext highlighter-rouge">.get(i)</code> 返回 <code class="language-plaintext highlighter-rouge">Option</code>。</li>
+  <li><strong>对 <code class="language-plaintext highlighter-rouge">String</code> 按字节切片可能切在 UTF-8 字符中间</strong>：<code class="language-plaintext highlighter-rouge">&amp;s[0..1]</code> 如果 <code class="language-plaintext highlighter-rouge">s</code> 含多字节字符会 panic。对文本应使用 <code class="language-plaintext highlighter-rouge">.chars()</code> 或 <code class="language-plaintext highlighter-rouge">char_indices()</code>。</li>
+  <li>切片借用期间不能修改底层容器：借用规则同样适用。</li>
+</ul>
+
+<hr />
+
+<h2 id="模块-b日常数据类型">模块 B：日常数据类型</h2>
+
+<h3 id="b1-字符串string--str--str">B1. 字符串：String / &amp;str / str</h3>
+
+<h4 id="内容介绍-3">内容介绍</h4>
+
+<p>Rust 字符串的核心区分：<strong><code class="language-plaintext highlighter-rouge">String</code> 是拥有所有权、可增长、堆分配的 UTF-8 缓冲区</strong>；<strong><code class="language-plaintext highlighter-rouge">&amp;str</code> 是借用的 UTF-8 字符串切片</strong>；<strong><code class="language-plaintext highlighter-rouge">str</code> 是未定长的底层类型，通常只以 <code class="language-plaintext highlighter-rouge">&amp;str</code> 形式出现</strong>。</p>
+
+<h4 id="详细描述-3">详细描述</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>所有权</th>
+      <th>可增长</th>
+      <th>存储</th>
+      <th>典型来源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">String</code></td>
+      <td>拥有</td>
+      <td>✅</td>
+      <td>堆</td>
+      <td><code class="language-plaintext highlighter-rouge">String::from</code>、<code class="language-plaintext highlighter-rouge">to_string()</code>、<code class="language-plaintext highlighter-rouge">format!</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&amp;str</code></td>
+      <td>借用</td>
+      <td>❌</td>
+      <td>指向别处</td>
+      <td>字符串字面量、<code class="language-plaintext highlighter-rouge">&amp;String</code> 切片</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">str</code></td>
+      <td>—</td>
+      <td>—</td>
+      <td>未定长</td>
+      <td>只能通过 <code class="language-plaintext highlighter-rouge">&amp;str</code> 使用</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>字符串字面量是 <code class="language-plaintext highlighter-rouge">&amp;'static str</code></strong>：编译期就存在于二进制中，生命周期是整个程序。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&amp;String</code> 可自动强转为 <code class="language-plaintext highlighter-rouge">&amp;str</code></strong>：因为 <code class="language-plaintext highlighter-rouge">String</code> 实现了 <code class="language-plaintext highlighter-rouge">Deref&lt;Target = str&gt;</code>。函数参数应优先写 <code class="language-plaintext highlighter-rouge">&amp;str</code>，这样同时接受 <code class="language-plaintext highlighter-rouge">&amp;String</code> 和字面量。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">String</code> 的修改</strong>：<code class="language-plaintext highlighter-rouge">push_str</code>、<code class="language-plaintext highlighter-rouge">push</code>、<code class="language-plaintext highlighter-rouge">+</code>、<code class="language-plaintext highlighter-rouge">format!</code>；索引<strong>不能</strong>直接用 <code class="language-plaintext highlighter-rouge">s[0]</code>（UTF-8 字节索引），应使用切片或字符迭代器。</li>
+</ul>
+
+<h4 id="代码示例-3">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">takes_slice</span><span class="p">(</span><span class="n">slice</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Got: {slice}"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">literal</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">'static</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">"Hello"</span><span class="p">;</span>       <span class="c1">// &amp;str</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">owned</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">literal</span><span class="nf">.to_string</span><span class="p">();</span> <span class="c1">// String</span>
+    <span class="n">owned</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">", world"</span><span class="p">);</span>
+
+    <span class="nf">takes_slice</span><span class="p">(</span><span class="n">literal</span><span class="p">);</span>   <span class="c1">// &amp;str 直接传入</span>
+    <span class="nf">takes_slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">owned</span><span class="p">);</span>    <span class="c1">// &amp;String 自动强转为 &amp;str</span>
+
+    <span class="c1">// 拼接</span>
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"foo"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">s2</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"bar"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">+</span> <span class="o">&amp;</span><span class="n">s2</span><span class="p">;</span>      <span class="c1">// s1 被 move，s2 被借用</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{s3}"</span><span class="p">);</span>        <span class="c1">// foobar</span>
+
+    <span class="c1">// 按字符遍历，避免字节切片 panic</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="k">in</span> <span class="s">"héllo"</span><span class="nf">.chars</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">print!</span><span class="p">(</span><span class="s">"{c} "</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-3">常见坑</h4>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">&amp;String</code> 和 <code class="language-plaintext highlighter-rouge">&amp;str</code> 在函数签名中混用</strong>：参数尽量用 <code class="language-plaintext highlighter-rouge">&amp;str</code>，返回值根据所有权需求选择 <code class="language-plaintext highlighter-rouge">String</code> 或 <code class="language-plaintext highlighter-rouge">&amp;str</code>。</li>
+  <li><strong>对 <code class="language-plaintext highlighter-rouge">String</code> 用 <code class="language-plaintext highlighter-rouge">[0]</code> 索引</strong>：编译错误，因为 <code class="language-plaintext highlighter-rouge">String</code> 没有实现 <code class="language-plaintext highlighter-rouge">Index&lt;usize&gt;</code>。用 <code class="language-plaintext highlighter-rouge">.as_bytes()[0]</code> 或 <code class="language-plaintext highlighter-rouge">.chars().next()</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">+</code> 会 move 左侧操作数</strong>：<code class="language-plaintext highlighter-rouge">s1 + &amp;s2</code> 之后 <code class="language-plaintext highlighter-rouge">s1</code> 不可再用；需要保留时用 <code class="language-plaintext highlighter-rouge">format!</code> 或 <code class="language-plaintext highlighter-rouge">clone()</code>。</li>
+</ul>
+
+<hr />
+
+<h3 id="b2-数组与切片辨析">B2. 数组与切片辨析</h3>
+
+<h4 id="内容介绍-4">内容介绍</h4>
+
+<p>数组 <code class="language-plaintext highlighter-rouge">[T; N]</code> 的长度是<strong>类型的一部分</strong>，在编译期确定，通常栈分配；切片 <code class="language-plaintext highlighter-rouge">&amp;[T]</code> 是<strong>借用视图</strong>，长度运行时确定，双字对象。</p>
+
+<h4 id="详细描述-4">详细描述</h4>
+
+<ul>
+  <li><strong>数组</strong>：适合长度固定、对性能敏感的场景；赋值时如果是 <code class="language-plaintext highlighter-rouge">Copy</code> 元素类型则按位复制，否则 move。</li>
+  <li><strong>切片</strong>：适合作为函数参数接收“任意长度的连续序列”；<code class="language-plaintext highlighter-rouge">&amp;[T]</code> 是数组和 <code class="language-plaintext highlighter-rouge">Vec&lt;T&gt;</code> 的公共接口。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">&amp;[T]</code> 与 <code class="language-plaintext highlighter-rouge">&amp;Vec&lt;T&gt;</code></strong>：函数参数写 <code class="language-plaintext highlighter-rouge">&amp;[T]</code> 更通用，因为 <code class="language-plaintext highlighter-rouge">&amp;Vec&lt;T&gt;</code> 可以自动强转为 <code class="language-plaintext highlighter-rouge">&amp;[T]</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Vec&lt;T&gt;</code> 是堆上的可增长数组</strong>：本质是“指针 + 长度 + 容量”，可以借用为 <code class="language-plaintext highlighter-rouge">&amp;[T]</code>。</li>
+</ul>
+
+<h4 id="代码示例-4">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">sum</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="nb">i32</span><span class="p">])</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+    <span class="n">values</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.sum</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">arr</span><span class="p">:</span> <span class="p">[</span><span class="nb">i32</span><span class="p">;</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">];</span>
+    <span class="k">let</span> <span class="n">v</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">];</span>
+
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nf">sum</span><span class="p">(</span><span class="o">&amp;</span><span class="n">arr</span><span class="p">));</span> <span class="c1">// 数组借用为切片</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nf">sum</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v</span><span class="p">));</span>   <span class="c1">// Vec 借用为切片</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-4">常见坑</h4>
+
+<ul>
+  <li>试图把数组直接当作动态长度容器使用：数组长度固定，需要动态增删时用 <code class="language-plaintext highlighter-rouge">Vec</code>。</li>
+  <li>函数签名写 <code class="language-plaintext highlighter-rouge">&amp;Vec&lt;T&gt;</code>：限制了只能接受 <code class="language-plaintext highlighter-rouge">Vec</code>，应优先写 <code class="language-plaintext highlighter-rouge">&amp;[T]</code>。</li>
+</ul>
+
+<hr />
+
+<h2 id="模块-c抽象与错误处理">模块 C：抽象与错误处理</h2>
+
+<h3 id="c1-泛型">C1. 泛型</h3>
+
+<h4 id="内容介绍-5">内容介绍</h4>
+
+<p>泛型允许函数、结构体、枚举对“任意类型”编写一次代码；但<strong>泛型函数体内只能使用对所有类型都有效的操作</strong>，需要更具体的能力时必须加 <strong>trait bound</strong>。</p>
+
+<h4 id="详细描述-5">详细描述</h4>
+
+<ul>
+  <li><strong>泛型参数声明</strong>：<code class="language-plaintext highlighter-rouge">fn foo&lt;T&gt;(x: T) -&gt; T</code>；结构体 <code class="language-plaintext highlighter-rouge">struct Point&lt;T&gt; { x: T, y: T }</code>。</li>
+  <li><strong>trait bound</strong>：<code class="language-plaintext highlighter-rouge">fn largest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T</code>。没有 <code class="language-plaintext highlighter-rouge">PartialOrd</code> 约束时，<code class="language-plaintext highlighter-rouge">&gt;</code> 不能用于 <code class="language-plaintext highlighter-rouge">T</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">where</code> 子句</strong>：复杂约束用 <code class="language-plaintext highlighter-rouge">where</code> 提升可读性。</li>
+  <li><strong>单态化（monomorphization）</strong>：泛型在编译期为每个具体类型生成一份代码，运行时没有动态分发开销。</li>
+  <li><strong>常见错误</strong>：忘记加 trait bound 导致“cannot compare/ cannot add”类错误；类型参数数量不匹配（E0107）。</li>
+</ul>
+
+<h4 id="代码示例-5">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="n">largest</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="nb">PartialOrd</span> <span class="o">+</span> <span class="nb">Copy</span><span class="o">&gt;</span><span class="p">(</span><span class="n">list</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="k">-&gt;</span> <span class="n">T</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">largest</span> <span class="o">=</span> <span class="n">list</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">for</span> <span class="o">&amp;</span><span class="n">item</span> <span class="k">in</span> <span class="n">list</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">&gt;</span> <span class="n">largest</span> <span class="p">{</span>
+            <span class="n">largest</span> <span class="o">=</span> <span class="n">item</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">largest</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">numbers</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">34</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">100</span><span class="p">];</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nf">largest</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numbers</span><span class="p">));</span> <span class="c1">// 100</span>
+
+    <span class="k">let</span> <span class="n">chars</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="sc">'y'</span><span class="p">,</span> <span class="sc">'m'</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">,</span> <span class="sc">'q'</span><span class="p">];</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nf">largest</span><span class="p">(</span><span class="o">&amp;</span><span class="n">chars</span><span class="p">));</span>   <span class="c1">// y</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-5">常见坑</h4>
+
+<ul>
+  <li>对泛型值做算术运算：需要 <code class="language-plaintext highlighter-rouge">T: std::ops::Add&lt;Output = T&gt;</code> 等约束。</li>
+  <li>以为泛型是“动态类型”：Rust 泛型在编译期单态化，类型错误在编译期暴露，不是运行时。</li>
+</ul>
+
+<hr />
+
+<h3 id="c2-trait">C2. trait</h3>
+
+<h4 id="内容介绍-6">内容介绍</h4>
+
+<p>trait 定义一组方法签名，类型通过 <code class="language-plaintext highlighter-rouge">impl Trait for Type</code> 实现这些方法。trait 是 Rust 实现多态和约束泛型的主要机制。闭包的 <code class="language-plaintext highlighter-rouge">Fn</code>/<code class="language-plaintext highlighter-rouge">FnMut</code>/<code class="language-plaintext highlighter-rouge">FnOnce</code> 本质上也是 trait。</p>
+
+<h4 id="详细描述-6">详细描述</h4>
+
+<ul>
+  <li><strong>定义与实现</strong>：trait 可以包含必需方法、默认方法、关联类型和关联常量。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">#[derive]</code> 属性</strong>：<code class="language-plaintext highlighter-rouge">#[derive(Debug, Clone, PartialEq)]</code> 让编译器自动生成常见 trait 实现，是属性最常用的场景之一。</li>
+  <li><strong>trait bound</strong>：<code class="language-plaintext highlighter-rouge">fn foo&lt;T: Summary&gt;(item: T)</code> 或 <code class="language-plaintext highlighter-rouge">impl Summary</code> 参数语法。</li>
+  <li><strong>trait 对象</strong>：<code class="language-plaintext highlighter-rouge">Box&lt;dyn Trait&gt;</code> 实现动态分发；泛型是静态分发，trait 对象是动态分发。</li>
+  <li><strong>孤儿规则（orphan rule）</strong>：只能为“当前 crate 中定义的类型”或“当前 crate 中定义的 trait”实现，防止冲突。</li>
+</ul>
+
+<h4 id="代码示例-6">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="n">Summary</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">summarize</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nd">#[derive(Debug)]</span>
+<span class="k">struct</span> <span class="n">Article</span> <span class="p">{</span> <span class="n">title</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span> <span class="n">author</span><span class="p">:</span> <span class="nb">String</span> <span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">Summary</span> <span class="k">for</span> <span class="n">Article</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">summarize</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
+        <span class="nd">format!</span><span class="p">(</span><span class="s">"{}, by {}"</span><span class="p">,</span> <span class="k">self</span><span class="py">.title</span><span class="p">,</span> <span class="k">self</span><span class="py">.author</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 静态分发：泛型 + trait bound</span>
+<span class="k">fn</span> <span class="n">notify</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="n">Summary</span><span class="o">&gt;</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Breaking: {}"</span><span class="p">,</span> <span class="n">item</span><span class="nf">.summarize</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span> <span class="p">{</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"Rust Traits"</span><span class="p">),</span>
+        <span class="n">author</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"Alice"</span><span class="p">),</span>
+    <span class="p">};</span>
+    <span class="nf">notify</span><span class="p">(</span><span class="o">&amp;</span><span class="n">article</span><span class="p">);</span>
+
+    <span class="c1">// 动态分发：trait 对象</span>
+    <span class="k">let</span> <span class="n">items</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Summary</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="nn">Box</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">article</span><span class="p">)];</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="k">in</span> <span class="o">&amp;</span><span class="n">items</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">item</span><span class="nf">.summarize</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-6">常见坑</h4>
+
+<ul>
+  <li><strong>实现 trait 时遗漏必需方法</strong>：报 E0046。</li>
+  <li><strong>调用 trait 方法时 trait 不在作用域</strong>：需要 <code class="language-plaintext highlighter-rouge">use</code> 引入 trait，或者 trait 定义在同一模块中。</li>
+  <li>混淆 <code class="language-plaintext highlighter-rouge">impl Trait</code> 与 <code class="language-plaintext highlighter-rouge">dyn Trait</code>：前者是静态分发、编译期确定具体类型；后者是动态分发、有虚表开销。</li>
+</ul>
+
+<hr />
+
+<h3 id="c3-错误处理">C3. 错误处理</h3>
+
+<h4 id="内容介绍-7">内容介绍</h4>
+
+<p>Rust 用 <code class="language-plaintext highlighter-rouge">Result&lt;T, E&gt;</code> 表示可恢复错误，用 <code class="language-plaintext highlighter-rouge">panic!</code> 表示不可恢复错误。<code class="language-plaintext highlighter-rouge">Option&lt;T&gt;</code> 表示可能缺失的值，常与 <code class="language-plaintext highlighter-rouge">Result</code> 配合完成“缺失 → 错误”的转换。</p>
+
+<h4 id="详细描述-7">详细描述</h4>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">Result</code> 的两个变体</strong>：<code class="language-plaintext highlighter-rouge">Ok(T)</code> 和 <code class="language-plaintext highlighter-rouge">Err(E)</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">?</code> 操作符</strong>：在返回 <code class="language-plaintext highlighter-rouge">Result</code> 的函数中，<code class="language-plaintext highlighter-rouge">expr?</code> 等价于“<code class="language-plaintext highlighter-rouge">Ok</code> 则解包取值，<code class="language-plaintext highlighter-rouge">Err</code> 则提前返回 <code class="language-plaintext highlighter-rouge">Err(From::from(e))</code>”，会自动进行错误类型转换。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Option</code> → <code class="language-plaintext highlighter-rouge">Result</code></strong>：<code class="language-plaintext highlighter-rouge">ok_or</code> / <code class="language-plaintext highlighter-rouge">ok_or_else</code> 把 <code class="language-plaintext highlighter-rouge">None</code> 转成自定义错误，便于 <code class="language-plaintext highlighter-rouge">?</code> 传播。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">unwrap</code>/<code class="language-plaintext highlighter-rouge">expect</code></strong>：适合原型和测试；生产代码中应尽量用 <code class="language-plaintext highlighter-rouge">?</code> 或 <code class="language-plaintext highlighter-rouge">match</code>。</li>
+  <li><strong>自定义错误</strong>：实现 <code class="language-plaintext highlighter-rouge">std::error::Error</code> + <code class="language-plaintext highlighter-rouge">Display</code>，或使用 <code class="language-plaintext highlighter-rouge">Box&lt;dyn Error&gt;</code> 作为通用错误类型。</li>
+</ul>
+
+<h4 id="代码示例-7">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">num</span><span class="p">::</span><span class="n">ParseIntError</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="nf">double_first</span><span class="p">(</span><span class="n">vec</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="o">&amp;</span><span class="nb">str</span><span class="p">])</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="nb">i32</span><span class="p">,</span> <span class="n">ParseIntError</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">first</span> <span class="o">=</span> <span class="n">vec</span><span class="nf">.first</span><span class="p">()</span><span class="nf">.ok_or_else</span><span class="p">(||</span> <span class="p">{</span>
+        <span class="c1">// 实际项目中这里应返回自定义错误类型</span>
+        <span class="s">"empty"</span><span class="py">.parse</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span><span class="p">()</span><span class="nf">.unwrap_err</span><span class="p">()</span>
+    <span class="p">})</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">n</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">first</span><span class="nf">.parse</span><span class="p">()</span><span class="o">?</span><span class="p">;</span> <span class="c1">// ? 自动传播 ParseIntError</span>
+    <span class="nf">Ok</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">match</span> <span class="nf">double_first</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span><span class="s">"10"</span><span class="p">,</span> <span class="s">"20"</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nf">Ok</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"{v}"</span><span class="p">),</span>
+        <span class="nf">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"error: {e}"</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-7">常见坑</h4>
+
+<ul>
+  <li><strong>在返回 <code class="language-plaintext highlighter-rouge">()</code> 的函数中使用 <code class="language-plaintext highlighter-rouge">?</code></strong>：编译错误，<code class="language-plaintext highlighter-rouge">?</code> 要求外围函数返回 <code class="language-plaintext highlighter-rouge">Result</code> 或 <code class="language-plaintext highlighter-rouge">Option</code>。</li>
+  <li><strong>错误类型不匹配</strong>：<code class="language-plaintext highlighter-rouge">?</code> 会调用 <code class="language-plaintext highlighter-rouge">From</code>，如果目标错误类型没有实现相应转换，需要 <code class="language-plaintext highlighter-rouge">map_err</code> 手动转换。</li>
+  <li><strong>滥用 <code class="language-plaintext highlighter-rouge">unwrap</code></strong>：在库代码或生产路径中，<code class="language-plaintext highlighter-rouge">unwrap</code> 会把可恢复错误变成 panic。</li>
+</ul>
+
+<hr />
+
+<h2 id="模块-d标准库与工程化">模块 D：标准库与工程化</h2>
+
+<h3 id="d1-智能指针box--rc--arc">D1. 智能指针：Box / Rc / Arc</h3>
+
+<h4 id="内容介绍-8">内容介绍</h4>
+
+<p>三者都用于在堆上分配数据，但所有权语义不同：<strong><code class="language-plaintext highlighter-rouge">Box&lt;T&gt;</code> 单一所有者</strong>；<strong><code class="language-plaintext highlighter-rouge">Rc&lt;T&gt;</code> 单线程多所有者（引用计数）</strong>；<strong><code class="language-plaintext highlighter-rouge">Arc&lt;T&gt;</code> 多线程多所有者（原子引用计数）</strong>。</p>
+
+<h4 id="详细描述-8">详细描述</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>所有权</th>
+      <th>线程安全</th>
+      <th>典型场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Box&lt;T&gt;</code></td>
+      <td>唯一</td>
+      <td>取决于 <code class="language-plaintext highlighter-rouge">T</code></td>
+      <td>递归类型、trait 对象、大对象装箱</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Rc&lt;T&gt;</code></td>
+      <td>共享（单线程）</td>
+      <td>❌</td>
+      <td>图结构、单线程共享配置</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Arc&lt;T&gt;</code></td>
+      <td>共享（多线程）</td>
+      <td>✅</td>
+      <td>跨线程共享只读数据</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">Box&lt;T&gt;</code></strong>：实现了 <code class="language-plaintext highlighter-rouge">Deref</code>，可像 <code class="language-plaintext highlighter-rouge">&amp;T</code> 一样使用；离开作用域自动释放堆内存。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Rc&lt;T&gt;</code></strong>：<code class="language-plaintext highlighter-rouge">clone()</code> 增加引用计数，最后一个 <code class="language-plaintext highlighter-rouge">Rc</code> 离开时数据被释放；<strong>只能单线程使用</strong>，因为计数不是原子的。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Arc&lt;T&gt;</code></strong>：<code class="language-plaintext highlighter-rouge">Rc</code> 的原子版本，可以跨线程 <code class="language-plaintext highlighter-rouge">clone</code> 和共享；通常与 <code class="language-plaintext highlighter-rouge">Mutex</code>/<code class="language-plaintext highlighter-rouge">RwLock</code> 配合实现多线程可变共享。</li>
+  <li><strong>选择原则</strong>：能用直接所有权就不用智能指针；需要多所有者时，单线程 <code class="language-plaintext highlighter-rouge">Rc</code>，多线程 <code class="language-plaintext highlighter-rouge">Arc</code>；需要 trait 对象或递归类型时 <code class="language-plaintext highlighter-rouge">Box</code>。</li>
+</ul>
+
+<h4 id="代码示例-8">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">rc</span><span class="p">::</span><span class="nb">Rc</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">sync</span><span class="p">::</span><span class="nb">Arc</span><span class="p">;</span>
+
+<span class="nd">#[derive(Debug)]</span>
+<span class="k">enum</span> <span class="n">List</span> <span class="p">{</span>
+    <span class="nf">Cons</span><span class="p">(</span><span class="nb">i32</span><span class="p">,</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&gt;</span><span class="p">),</span>
+    <span class="n">Nil</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="k">use</span> <span class="nn">List</span><span class="p">::{</span><span class="n">Cons</span><span class="p">,</span> <span class="n">Nil</span><span class="p">};</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Box：递归类型</span>
+    <span class="k">let</span> <span class="n">list</span> <span class="o">=</span> <span class="nf">Cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nn">Box</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nf">Cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nn">Box</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">Nil</span><span class="p">))));</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">list</span><span class="p">);</span>
+
+    <span class="c1">// Rc：单线程共享</span>
+    <span class="k">let</span> <span class="n">a</span> <span class="o">=</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"shared"</span><span class="p">));</span>
+    <span class="k">let</span> <span class="n">b</span> <span class="o">=</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"count = {}"</span><span class="p">,</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">strong_count</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">));</span> <span class="c1">// 2</span>
+
+    <span class="c1">// Arc：跨线程共享</span>
+    <span class="k">let</span> <span class="n">data</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nd">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+    <span class="k">let</span> <span class="n">data2</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"from thread: {:?}"</span><span class="p">,</span> <span class="n">data2</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="n">handle</span><span class="nf">.join</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"from main: {:?}"</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-8">常见坑</h4>
+
+<ul>
+  <li><strong>把 <code class="language-plaintext highlighter-rouge">Rc</code> 跨线程发送</strong>：编译错误，<code class="language-plaintext highlighter-rouge">Rc</code> 不实现 <code class="language-plaintext highlighter-rouge">Send</code>。</li>
+  <li><strong>用 <code class="language-plaintext highlighter-rouge">Arc</code> 但不加锁就想修改数据</strong>：<code class="language-plaintext highlighter-rouge">Arc</code> 只提供共享所有权，可变性需要 <code class="language-plaintext highlighter-rouge">Mutex</code>/<code class="language-plaintext highlighter-rouge">RwLock</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Rc</code> 循环引用导致内存泄漏</strong>：用 <code class="language-plaintext highlighter-rouge">Weak&lt;T&gt;</code> 打破环。</li>
+</ul>
+
+<hr />
+
+<h3 id="d2-集合与可选类型vec--hashmap--option">D2. 集合与可选类型：Vec / HashMap / Option</h3>
+
+<h4 id="内容介绍-9">内容介绍</h4>
+
+<p><code class="language-plaintext highlighter-rouge">Vec&lt;T&gt;</code> 是可增长的堆数组；<code class="language-plaintext highlighter-rouge">HashMap&lt;K, V&gt;</code> 是哈希表；<code class="language-plaintext highlighter-rouge">Option&lt;T&gt;</code> 是 <code class="language-plaintext highlighter-rouge">Some(T)</code>/<code class="language-plaintext highlighter-rouge">None</code> 的枚举，用于表示可选值。</p>
+
+<h4 id="详细描述-9">详细描述</h4>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">Vec&lt;T&gt;</code></strong>：<code class="language-plaintext highlighter-rouge">push</code>/<code class="language-plaintext highlighter-rouge">pop</code>/<code class="language-plaintext highlighter-rouge">iter</code>/<code class="language-plaintext highlighter-rouge">get</code>；可以用 <code class="language-plaintext highlighter-rouge">&amp;v[..]</code> 借用为切片；<code class="language-plaintext highlighter-rouge">get(i)</code> 返回 <code class="language-plaintext highlighter-rouge">Option&lt;&amp;T&gt;</code>，避免越界 panic。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">HashMap&lt;K, V&gt;</code></strong>：<code class="language-plaintext highlighter-rouge">insert</code>/<code class="language-plaintext highlighter-rouge">get</code>/<code class="language-plaintext highlighter-rouge">entry</code>；<code class="language-plaintext highlighter-rouge">entry</code> API 适合“存在则更新、不存在则插入”的场景。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Option&lt;T&gt;</code></strong>：<code class="language-plaintext highlighter-rouge">map</code>、<code class="language-plaintext highlighter-rouge">and_then</code>、<code class="language-plaintext highlighter-rouge">unwrap_or</code>、<code class="language-plaintext highlighter-rouge">?</code>（在返回 <code class="language-plaintext highlighter-rouge">Option</code> 的函数中）。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Option</code> 与 <code class="language-plaintext highlighter-rouge">Result</code> 的互转</strong>：<code class="language-plaintext highlighter-rouge">ok_or</code>/<code class="language-plaintext highlighter-rouge">ok_or_else</code> 把 <code class="language-plaintext highlighter-rouge">None</code> 转成错误；<code class="language-plaintext highlighter-rouge">ok()</code> 把 <code class="language-plaintext highlighter-rouge">Result</code> 转成 <code class="language-plaintext highlighter-rouge">Option</code>。</li>
+</ul>
+
+<h4 id="代码示例-9">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">collections</span><span class="p">::</span><span class="n">HashMap</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">v</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+    <span class="n">v</span><span class="nf">.push</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nf">Some</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">v</span><span class="nf">.get</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{x}"</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"越界，但没 panic"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">scores</span> <span class="o">=</span> <span class="nn">HashMap</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+    <span class="n">scores</span><span class="nf">.insert</span><span class="p">(</span><span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"Alice"</span><span class="p">),</span> <span class="mi">90</span><span class="p">);</span>
+    <span class="n">scores</span><span class="nf">.entry</span><span class="p">(</span><span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"Bob"</span><span class="p">))</span><span class="nf">.or_insert</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+
+    <span class="k">let</span> <span class="n">alice</span> <span class="o">=</span> <span class="n">scores</span><span class="nf">.get</span><span class="p">(</span><span class="s">"Alice"</span><span class="p">)</span><span class="nf">.copied</span><span class="p">()</span><span class="nf">.unwrap_or</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Alice: {alice}"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-9">常见坑</h4>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">HashMap::get</code> 返回 <code class="language-plaintext highlighter-rouge">Option&lt;&amp;V&gt;</code></strong>：需要 <code class="language-plaintext highlighter-rouge">copied()</code>/<code class="language-plaintext highlighter-rouge">cloned()</code> 才能得到值类型。</li>
+  <li><strong>在遍历 <code class="language-plaintext highlighter-rouge">Vec</code> 的同时修改它</strong>：借用规则会阻止，需要先收集索引或使用 <code class="language-plaintext highlighter-rouge">retain</code>/<code class="language-plaintext highlighter-rouge">drain</code>。</li>
+</ul>
+
+<hr />
+
+<h3 id="d3-闭包从-trait-视角理解-fn-家族">D3. 闭包（从 trait 视角理解 Fn 家族）</h3>
+
+<h4 id="内容介绍-10">内容介绍</h4>
+
+<p>闭包是可以捕获环境的匿名函数。捕获方式决定了闭包实现哪个 trait：<strong><code class="language-plaintext highlighter-rouge">Fn</code>（不可变借用捕获）</strong>、<strong><code class="language-plaintext highlighter-rouge">FnMut</code>（可变借用捕获）</strong>、<strong><code class="language-plaintext highlighter-rouge">FnOnce</code>（按值捕获，只能调用一次）</strong>。</p>
+
+<h4 id="详细描述-10">详细描述</h4>
+
+<ul>
+  <li><strong>自动推断</strong>：编译器根据闭包体内对捕获变量的使用方式，选择<strong>尽可能少限制</strong>的 trait。只读 → <code class="language-plaintext highlighter-rouge">Fn</code>；需要修改 → <code class="language-plaintext highlighter-rouge">FnMut</code>；需要 move/drop → <code class="language-plaintext highlighter-rouge">FnOnce</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">move</code> 关键字</strong>：强制闭包按值捕获，常用于把闭包发送到线程或从函数返回闭包。</li>
+  <li><strong>返回闭包</strong>：必须用 <code class="language-plaintext highlighter-rouge">impl Fn(...)</code> 或 <code class="language-plaintext highlighter-rouge">Box&lt;dyn Fn(...)&gt;</code> 作为返回类型，因为闭包类型无法命名。</li>
+  <li><strong>闭包与 trait bound</strong>：接收闭包的泛型函数用 <code class="language-plaintext highlighter-rouge">F: Fn(i32) -&gt; i32</code> 约束。</li>
+</ul>
+
+<h4 id="代码示例-10">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="n">apply</span><span class="o">&lt;</span><span class="n">F</span><span class="p">:</span> <span class="nf">FnOnce</span><span class="p">()</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">f</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">create_fnmut</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="k">impl</span> <span class="nf">FnMut</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"count = {count}"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">greeting</span> <span class="o">=</span> <span class="s">"hello"</span><span class="p">;</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">farewell</span> <span class="o">=</span> <span class="s">"goodbye"</span><span class="nf">.to_owned</span><span class="p">();</span>
+
+    <span class="k">let</span> <span class="n">diary</span> <span class="o">=</span> <span class="p">||</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{greeting}"</span><span class="p">);</span>          <span class="c1">// Fn：不可变借用</span>
+        <span class="n">farewell</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">"!!!"</span><span class="p">);</span>        <span class="c1">// FnMut：可变借用</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{farewell}"</span><span class="p">);</span>
+        <span class="nf">drop</span><span class="p">(</span><span class="n">farewell</span><span class="p">);</span>                  <span class="c1">// FnOnce：按值消费</span>
+    <span class="p">};</span>
+
+    <span class="nf">apply</span><span class="p">(</span><span class="n">diary</span><span class="p">);</span> <span class="c1">// FnOnce 可以接受 Fn/FnMut 闭包</span>
+
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">counter</span> <span class="o">=</span> <span class="nf">create_fnmut</span><span class="p">();</span>
+    <span class="nf">counter</span><span class="p">();</span>
+    <span class="nf">counter</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-10">常见坑</h4>
+
+<ul>
+  <li><strong>把 <code class="language-plaintext highlighter-rouge">FnOnce</code> 闭包传给要求 <code class="language-plaintext highlighter-rouge">Fn</code> 的函数</strong>：编译错误，因为 <code class="language-plaintext highlighter-rouge">FnOnce</code> 可能消费捕获值，不能多次调用。</li>
+  <li><strong>返回闭包时忘记 <code class="language-plaintext highlighter-rouge">move</code></strong>：捕获的局部变量在函数结束后失效，需要 <code class="language-plaintext highlighter-rouge">move</code> 把所有权移入闭包。</li>
+  <li>误以为 <code class="language-plaintext highlighter-rouge">move</code> 闭包总是 <code class="language-plaintext highlighter-rouge">FnOnce</code>：<code class="language-plaintext highlighter-rouge">move</code> 决定<strong>如何捕获</strong>，<code class="language-plaintext highlighter-rouge">Fn</code> 家族由<strong>如何使用</strong>决定；<code class="language-plaintext highlighter-rouge">move</code> 闭包仍可能是 <code class="language-plaintext highlighter-rouge">Fn</code>。</li>
+</ul>
+
+<hr />
+
+<h3 id="d4-模块与可见性含-cfg-属性">D4. 模块与可见性（含 cfg 属性）</h3>
+
+<h4 id="内容介绍-11">内容介绍</h4>
+
+<p>模块系统用于组织代码和控制可见性。默认所有项是<strong>私有</strong>的；<code class="language-plaintext highlighter-rouge">pub</code> 及其变体（<code class="language-plaintext highlighter-rouge">pub(crate)</code>、<code class="language-plaintext highlighter-rouge">pub(super)</code>、<code class="language-plaintext highlighter-rouge">pub(in path)</code>）控制项可以被谁访问。</p>
+
+<h4 id="详细描述-11">详细描述</h4>
+
+<ul>
+  <li><strong>默认私有</strong>：模块中的函数、结构体、字段默认只有当前模块及子模块可见。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">pub</code> 的传播性</strong>：一个项要从 crate 外部访问，从根到该项的<strong>每一层模块</strong>都必须是 <code class="language-plaintext highlighter-rouge">pub</code> 的。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">pub(crate)</code></strong>：整个 crate 内可见，但不对外暴露；<code class="language-plaintext highlighter-rouge">pub(super)</code> 对父模块可见。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">pub use</code> 重导出</strong>：把内部路径的项以更友好的路径暴露给外部。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">#[cfg(...)]</code> 属性</strong>：条件编译，常用于 <code class="language-plaintext highlighter-rouge">#[cfg(test)] mod tests</code>、<code class="language-plaintext highlighter-rouge">#[cfg(target_os = "linux")]</code> 等场景。</li>
+</ul>
+
+<h4 id="代码示例-11">代码示例</h4>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">mod</span> <span class="n">outer</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">mod</span> <span class="n">inner</span> <span class="p">{</span>
+        <span class="k">pub</span> <span class="k">fn</span> <span class="nf">public_api</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nd">println!</span><span class="p">(</span><span class="s">"public"</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">fn</span> <span class="nf">private_helper</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nd">println!</span><span class="p">(</span><span class="s">"private"</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span> <span class="k">fn</span> <span class="nf">crate_only</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"crate only"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nd">#[cfg(test)]</span>
+<span class="k">mod</span> <span class="n">tests</span> <span class="p">{</span>
+    <span class="nd">#[test]</span>
+    <span class="k">fn</span> <span class="nf">it_works</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">assert_eq!</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nn">outer</span><span class="p">::</span><span class="nn">inner</span><span class="p">::</span><span class="nf">public_api</span><span class="p">();</span> <span class="c1">// ✅</span>
+    <span class="c1">// outer::inner::private_helper(); // ❌ 私有</span>
+    <span class="nn">outer</span><span class="p">::</span><span class="nf">crate_only</span><span class="p">();</span> <span class="c1">// ✅ crate 内可见</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="常见坑-11">常见坑</h4>
+
+<ul>
+  <li><strong>结构体字段默认私有</strong>：<code class="language-plaintext highlighter-rouge">pub struct</code> 不会让字段自动公开，需要逐个字段加 <code class="language-plaintext highlighter-rouge">pub</code>，或提供构造函数。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">pub mod</code> 与 <code class="language-plaintext highlighter-rouge">pub use</code> 混淆</strong>：<code class="language-plaintext highlighter-rouge">pub mod</code> 暴露模块路径；<code class="language-plaintext highlighter-rouge">pub use</code> 暴露项的重导出路径。</li>
+  <li>忘了 <code class="language-plaintext highlighter-rouge">#[cfg(test)]</code>：测试模块在生产构建中也会被编译，增加二进制体积。</li>
+</ul>
+
+<hr />
+
+<h2 id="附录自测清单">附录：自测清单</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>主题</th>
+      <th>自测问题</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>所有权</td>
+      <td><code class="language-plaintext highlighter-rouge">let y = x;</code> 之后 <code class="language-plaintext highlighter-rouge">x</code> 在什么情况下仍可用？</td>
+    </tr>
+    <tr>
+      <td>借用</td>
+      <td>为什么“一个可变引用或多个不可变引用”能保证内存安全？</td>
+    </tr>
+    <tr>
+      <td>切片</td>
+      <td><code class="language-plaintext highlighter-rouge">&amp;[T]</code> 的双字对象分别是什么？</td>
+    </tr>
+    <tr>
+      <td>字符串</td>
+      <td>函数参数为什么优先写 <code class="language-plaintext highlighter-rouge">&amp;str</code> 而不是 <code class="language-plaintext highlighter-rouge">&amp;String</code>？</td>
+    </tr>
+    <tr>
+      <td>泛型</td>
+      <td>不加 <code class="language-plaintext highlighter-rouge">PartialOrd</code> bound 时，<code class="language-plaintext highlighter-rouge">largest&lt;T&gt;</code> 为什么编译失败？</td>
+    </tr>
+    <tr>
+      <td>trait</td>
+      <td><code class="language-plaintext highlighter-rouge">impl Trait</code> 和 <code class="language-plaintext highlighter-rouge">dyn Trait</code> 的分发方式有何不同？</td>
+    </tr>
+    <tr>
+      <td>错误处理</td>
+      <td><code class="language-plaintext highlighter-rouge">?</code> 在错误分支实际执行了什么转换？</td>
+    </tr>
+    <tr>
+      <td>智能指针</td>
+      <td><code class="language-plaintext highlighter-rouge">Rc</code> 为什么不能跨线程？<code class="language-plaintext highlighter-rouge">Arc</code> 为什么能？</td>
+    </tr>
+    <tr>
+      <td>闭包</td>
+      <td><code class="language-plaintext highlighter-rouge">move</code> 闭包一定是 <code class="language-plaintext highlighter-rouge">FnOnce</code> 吗？</td>
+    </tr>
+    <tr>
+      <td>模块</td>
+      <td><code class="language-plaintext highlighter-rouge">pub(crate)</code> 与 <code class="language-plaintext highlighter-rouge">pub</code> 的可见范围差别是什么？</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<p><strong>最后一点建议</strong>：你的列表本身说明你已经摸到了 Rust 的“硬骨头”。接下来最有效的巩固方式不是继续加知识点，而是<strong>围绕所有权和借用把代码写到手熟</strong>——绝大多数 trait、闭包、错误处理的困惑，最终都会回到“这个值现在归谁、借用关系是否合法”这两个问题上。</p>]]></content><author><name>Scotws</name></author><category term="Rust" /><summary type="html"><![CDATA[模块 A：所有权系统的地基 A1. 所有权与 Move 内容介绍 所有权是 Rust 内存管理的核心规则集：每个值有唯一所有者；所有者离开作用域时值被 drop；所有权可以移动（move），但移动后原变量不可再用。 详细描述 栈与堆的分工：大小固定的数据默认在栈上；大小未知或可变的数据在堆上，栈上只存指针。 Move 的本质：对于非 Copy 类型（如 String、Vec），赋值或传参时堆数据的所有权指针被转移，原变量被编译器标记为“已移动”。 Copy 的例外：所有字段都是 Copy 的类型可以标记 #[derive(Copy, Clone)]，赋值时按位复制，不触发移动。 Clone 不是 Copy：clone() 是显式的深拷贝，适用于需要保留原值的场景。 代码示例 #[derive(Debug)] struct MyStruct { s: u32 } fn main() { let x = MyStruct { s: 5 }; let y = x; // move：x 的所有权转移给 y // println!("{:?}", x); // ❌ 编译错误 E0382：x 已被移动 println!("{:?}", y); // ✅ y 有效 let a = 1_i32; let b = a; // i32 是 Copy，a 仍然可用 println!("{a} {b}"); // ✅ let s1 = String::from("many"); let s2 = s1.clone(); // 显式深拷贝 println!("{s1} {s2}"); // ✅ } 常见坑 把非 Copy 类型传给函数后继续使用原变量：报 E0382 “use of moved value”。 试图给含 String 字段的结构体加 #[derive(Copy)]：如果字段不是 Copy，编译失败。 在循环中反复 clone() 大对象：能借用就借用，clone() 是性能陷阱。 A2. 引用与借用 内容介绍 引用（reference） 是不获取所有权而访问值的方式；借用（borrowing） 是使用引用的行为。&amp;T 是不可变借用，&amp;mut T 是可变借用。 详细描述 借用规则（核心）：在任意时刻，对同一数据只能存在一个可变引用，或任意多个不可变引用，二者不能同时存在。 不可变借用默认只读：通过 &amp;T 不能修改数据，即使原变量是 mut 的。 可变借用需要 &amp;mut：创建 &amp;mut T 要求原变量本身是 mut 的。 引用的作用域：引用的有效范围不能超过被借用值的生命周期——这是编译器在函数签名层面检查的，日常编码中大多由借用规则隐式保证。 Deref 强制转换：&amp;String 可以自动强转为 &amp;str，&amp;Vec&lt;T&gt; 可以强转为 &amp;[T]，这是很多 API 接受 &amp;str/&amp;[T] 的原因。 代码示例 fn calculate_length(s: &amp;String) -&gt; usize { s.len() } // s 离开作用域，但不拥有数据，所以不会 drop 原 String fn main() { let s1 = String::from("hello"); let len = calculate_length(&amp;s1); // 借用，s1 仍然拥有所有权 println!("The length of '{}' is {}.", s1, len); // ✅ let mut s = String::from("hello"); // let r1 = &amp;s; // let r2 = &amp;mut s; // ❌ 不可变借用与可变借用不能共存 // println!("{r1}"); let r3 = &amp;mut s; r3.push_str(", world"); // ✅ 可变借用 println!("{s}"); // ✅ r3 的借用在此前结束 } 常见坑 同时持有不可变和可变引用：报错“cannot borrow as mutable because it is also borrowed as immutable”。 在 struct 中存引用：需要显式生命周期标注，这是后续智能指针要解决的场景之一。 误以为 &amp;mut T 只是“可变的别名”：它同时意味着排他性访问，这是 Rust 并发安全的基础。 A3. 切片 内容介绍 切片（slice）是对连续序列的一部分的借用视图，类型为 &amp;[T] 或 &amp;mut [T]。它本身是一个“双字对象”：一个指针 + 一个长度。 详细描述 切片的长度在运行时已知，不在类型中编码：[T; N] 的长度 N 是类型的一部分；&amp;[T] 的长度是值的一部分。 切片不拥有数据：它借用数组、Vec、String 等底层连续存储的一部分。 范围语法：&amp;arr[1..4] 借用索引 1、2、3 的元素；.. 表示全体，..n 表示从头到 n（不含），n.. 表示从 n 到尾。 &amp;str 是字节切片：&amp;str 本质上是对 UTF-8 字节序列的切片，这也是字符串与切片之间的桥梁。 代码示例 fn analyze_slice(slice: &amp;[i32]) { println!("第一个元素：{}，长度：{}", slice[0], slice.len()); } fn main() { let xs: [i32; 5] = [1, 2, 3, 4, 5]; analyze_slice(&amp;xs); // 整个数组借用为切片 analyze_slice(&amp;xs[1..4]); // 借用部分：2, 3, 4 let v = vec![10, 20, 30, 40]; let mid = &amp;v[1..3]; // Vec 也可以切片 println!("{:?}", mid); // [20, 30] let s = String::from("hello"); let hello = &amp;s[..]; // &amp;str，借用整个 String let ell = &amp;s[1..4]; // "ell" println!("{hello} {ell}"); } 常见坑 越界索引：xs[10] 在编译期可知越界时直接编译失败；运行时越界会 panic。安全替代是 .get(i) 返回 Option。 对 String 按字节切片可能切在 UTF-8 字符中间：&amp;s[0..1] 如果 s 含多字节字符会 panic。对文本应使用 .chars() 或 char_indices()。 切片借用期间不能修改底层容器：借用规则同样适用。 模块 B：日常数据类型 B1. 字符串：String / &amp;str / str 内容介绍 Rust 字符串的核心区分：String 是拥有所有权、可增长、堆分配的 UTF-8 缓冲区；&amp;str 是借用的 UTF-8 字符串切片；str 是未定长的底层类型，通常只以 &amp;str 形式出现。 详细描述 类型 所有权 可增长 存储 典型来源 String 拥有 ✅ 堆 String::from、to_string()、format! &amp;str 借用 ❌ 指向别处 字符串字面量、&amp;String 切片 str — — 未定长 只能通过 &amp;str 使用 字符串字面量是 &amp;'static str：编译期就存在于二进制中，生命周期是整个程序。 &amp;String 可自动强转为 &amp;str：因为 String 实现了 Deref&lt;Target = str&gt;。函数参数应优先写 &amp;str，这样同时接受 &amp;String 和字面量。 String 的修改：push_str、push、+、format!；索引不能直接用 s[0]（UTF-8 字节索引），应使用切片或字符迭代器。 代码示例 fn takes_slice(slice: &amp;str) { println!("Got: {slice}"); } fn main() { let literal: &amp;'static str = "Hello"; // &amp;str let mut owned: String = literal.to_string(); // String owned.push_str(", world"); takes_slice(literal); // &amp;str 直接传入 takes_slice(&amp;owned); // &amp;String 自动强转为 &amp;str // 拼接 let s1 = String::from("foo"); let s2 = String::from("bar"); let s3 = s1 + &amp;s2; // s1 被 move，s2 被借用 println!("{s3}"); // foobar // 按字符遍历，避免字节切片 panic for c in "héllo".chars() { print!("{c} "); } } 常见坑 &amp;String 和 &amp;str 在函数签名中混用：参数尽量用 &amp;str，返回值根据所有权需求选择 String 或 &amp;str。 对 String 用 [0] 索引：编译错误，因为 String 没有实现 Index&lt;usize&gt;。用 .as_bytes()[0] 或 .chars().next()。 + 会 move 左侧操作数：s1 + &amp;s2 之后 s1 不可再用；需要保留时用 format! 或 clone()。 B2. 数组与切片辨析 内容介绍 数组 [T; N] 的长度是类型的一部分，在编译期确定，通常栈分配；切片 &amp;[T] 是借用视图，长度运行时确定，双字对象。 详细描述 数组：适合长度固定、对性能敏感的场景；赋值时如果是 Copy 元素类型则按位复制，否则 move。 切片：适合作为函数参数接收“任意长度的连续序列”；&amp;[T] 是数组和 Vec&lt;T&gt; 的公共接口。 &amp;[T] 与 &amp;Vec&lt;T&gt;：函数参数写 &amp;[T] 更通用，因为 &amp;Vec&lt;T&gt; 可以自动强转为 &amp;[T]。 Vec&lt;T&gt; 是堆上的可增长数组：本质是“指针 + 长度 + 容量”，可以借用为 &amp;[T]。 代码示例 fn sum(values: &amp;[i32]) -&gt; i32 { values.iter().sum() } fn main() { let arr: [i32; 4] = [1, 2, 3, 4]; let v: Vec&lt;i32&gt; = vec![5, 6, 7]; println!("{}", sum(&amp;arr)); // 数组借用为切片 println!("{}", sum(&amp;v)); // Vec 借用为切片 } 常见坑 试图把数组直接当作动态长度容器使用：数组长度固定，需要动态增删时用 Vec。 函数签名写 &amp;Vec&lt;T&gt;：限制了只能接受 Vec，应优先写 &amp;[T]。 模块 C：抽象与错误处理 C1. 泛型 内容介绍 泛型允许函数、结构体、枚举对“任意类型”编写一次代码；但泛型函数体内只能使用对所有类型都有效的操作，需要更具体的能力时必须加 trait bound。 详细描述 泛型参数声明：fn foo&lt;T&gt;(x: T) -&gt; T；结构体 struct Point&lt;T&gt; { x: T, y: T }。 trait bound：fn largest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T。没有 PartialOrd 约束时，&gt; 不能用于 T。 where 子句：复杂约束用 where 提升可读性。 单态化（monomorphization）：泛型在编译期为每个具体类型生成一份代码，运行时没有动态分发开销。 常见错误：忘记加 trait bound 导致“cannot compare/ cannot add”类错误；类型参数数量不匹配（E0107）。 代码示例 fn largest&lt;T: PartialOrd + Copy&gt;(list: &amp;[T]) -&gt; T { let mut largest = list[0]; for &amp;item in list { if item &gt; largest { largest = item; } } largest } fn main() { let numbers = vec![34, 50, 25, 100]; println!("{}", largest(&amp;numbers)); // 100 let chars = vec!['y', 'm', 'a', 'q']; println!("{}", largest(&amp;chars)); // y } 常见坑 对泛型值做算术运算：需要 T: std::ops::Add&lt;Output = T&gt; 等约束。 以为泛型是“动态类型”：Rust 泛型在编译期单态化，类型错误在编译期暴露，不是运行时。 C2. trait 内容介绍 trait 定义一组方法签名，类型通过 impl Trait for Type 实现这些方法。trait 是 Rust 实现多态和约束泛型的主要机制。闭包的 Fn/FnMut/FnOnce 本质上也是 trait。 详细描述 定义与实现：trait 可以包含必需方法、默认方法、关联类型和关联常量。 #[derive] 属性：#[derive(Debug, Clone, PartialEq)] 让编译器自动生成常见 trait 实现，是属性最常用的场景之一。 trait bound：fn foo&lt;T: Summary&gt;(item: T) 或 impl Summary 参数语法。 trait 对象：Box&lt;dyn Trait&gt; 实现动态分发；泛型是静态分发，trait 对象是动态分发。 孤儿规则（orphan rule）：只能为“当前 crate 中定义的类型”或“当前 crate 中定义的 trait”实现，防止冲突。 代码示例 trait Summary { fn summarize(&amp;self) -&gt; String; } #[derive(Debug)] struct Article { title: String, author: String } impl Summary for Article { fn summarize(&amp;self) -&gt; String { format!("{}, by {}", self.title, self.author) } } // 静态分发：泛型 + trait bound fn notify&lt;T: Summary&gt;(item: &amp;T) { println!("Breaking: {}", item.summarize()); } fn main() { let article = Article { title: String::from("Rust Traits"), author: String::from("Alice"), }; notify(&amp;article); // 动态分发：trait 对象 let items: Vec&lt;Box&lt;dyn Summary&gt;&gt; = vec![Box::new(article)]; for item in &amp;items { println!("{}", item.summarize()); } } 常见坑 实现 trait 时遗漏必需方法：报 E0046。 调用 trait 方法时 trait 不在作用域：需要 use 引入 trait，或者 trait 定义在同一模块中。 混淆 impl Trait 与 dyn Trait：前者是静态分发、编译期确定具体类型；后者是动态分发、有虚表开销。 C3. 错误处理 内容介绍 Rust 用 Result&lt;T, E&gt; 表示可恢复错误，用 panic! 表示不可恢复错误。Option&lt;T&gt; 表示可能缺失的值，常与 Result 配合完成“缺失 → 错误”的转换。 详细描述 Result 的两个变体：Ok(T) 和 Err(E)。 ? 操作符：在返回 Result 的函数中，expr? 等价于“Ok 则解包取值，Err 则提前返回 Err(From::from(e))”，会自动进行错误类型转换。 Option → Result：ok_or / ok_or_else 把 None 转成自定义错误，便于 ? 传播。 unwrap/expect：适合原型和测试；生产代码中应尽量用 ? 或 match。 自定义错误：实现 std::error::Error + Display，或使用 Box&lt;dyn Error&gt; 作为通用错误类型。 代码示例 use std::num::ParseIntError; fn double_first(vec: &amp;[&amp;str]) -&gt; Result&lt;i32, ParseIntError&gt; { let first = vec.first().ok_or_else(|| { // 实际项目中这里应返回自定义错误类型 "empty".parse::&lt;i32&gt;().unwrap_err() })?; let n: i32 = first.parse()?; // ? 自动传播 ParseIntError Ok(n * 2) } fn main() { match double_first(&amp;["10", "20"]) { Ok(v) =&gt; println!("{v}"), Err(e) =&gt; println!("error: {e}"), } } 常见坑 在返回 () 的函数中使用 ?：编译错误，? 要求外围函数返回 Result 或 Option。 错误类型不匹配：? 会调用 From，如果目标错误类型没有实现相应转换，需要 map_err 手动转换。 滥用 unwrap：在库代码或生产路径中，unwrap 会把可恢复错误变成 panic。 模块 D：标准库与工程化 D1. 智能指针：Box / Rc / Arc 内容介绍 三者都用于在堆上分配数据，但所有权语义不同：Box&lt;T&gt; 单一所有者；Rc&lt;T&gt; 单线程多所有者（引用计数）；Arc&lt;T&gt; 多线程多所有者（原子引用计数）。 详细描述 类型 所有权 线程安全 典型场景 Box&lt;T&gt; 唯一 取决于 T 递归类型、trait 对象、大对象装箱 Rc&lt;T&gt; 共享（单线程） ❌ 图结构、单线程共享配置 Arc&lt;T&gt; 共享（多线程） ✅ 跨线程共享只读数据 Box&lt;T&gt;：实现了 Deref，可像 &amp;T 一样使用；离开作用域自动释放堆内存。 Rc&lt;T&gt;：clone() 增加引用计数，最后一个 Rc 离开时数据被释放；只能单线程使用，因为计数不是原子的。 Arc&lt;T&gt;：Rc 的原子版本，可以跨线程 clone 和共享；通常与 Mutex/RwLock 配合实现多线程可变共享。 选择原则：能用直接所有权就不用智能指针；需要多所有者时，单线程 Rc，多线程 Arc；需要 trait 对象或递归类型时 Box。 代码示例 use std::rc::Rc; use std::sync::Arc; #[derive(Debug)] enum List { Cons(i32, Box&lt;List&gt;), Nil, } use List::{Cons, Nil}; fn main() { // Box：递归类型 let list = Cons(1, Box::new(Cons(2, Box::new(Nil)))); println!("{:?}", list); // Rc：单线程共享 let a = Rc::new(String::from("shared")); let b = Rc::clone(&amp;a); println!("count = {}", Rc::strong_count(&amp;a)); // 2 // Arc：跨线程共享 let data = Arc::new(vec![1, 2, 3]); let data2 = Arc::clone(&amp;data); let handle = std::thread::spawn(move || { println!("from thread: {:?}", data2); }); handle.join().unwrap(); println!("from main: {:?}", data); } 常见坑 把 Rc 跨线程发送：编译错误，Rc 不实现 Send。 用 Arc 但不加锁就想修改数据：Arc 只提供共享所有权，可变性需要 Mutex/RwLock。 Rc 循环引用导致内存泄漏：用 Weak&lt;T&gt; 打破环。 D2. 集合与可选类型：Vec / HashMap / Option 内容介绍 Vec&lt;T&gt; 是可增长的堆数组；HashMap&lt;K, V&gt; 是哈希表；Option&lt;T&gt; 是 Some(T)/None 的枚举，用于表示可选值。 详细描述 Vec&lt;T&gt;：push/pop/iter/get；可以用 &amp;v[..] 借用为切片；get(i) 返回 Option&lt;&amp;T&gt;，避免越界 panic。 HashMap&lt;K, V&gt;：insert/get/entry；entry API 适合“存在则更新、不存在则插入”的场景。 Option&lt;T&gt;：map、and_then、unwrap_or、?（在返回 Option 的函数中）。 Option 与 Result 的互转：ok_or/ok_or_else 把 None 转成错误；ok() 把 Result 转成 Option。 代码示例 use std::collections::HashMap; fn main() { let mut v = vec![1, 2, 3]; v.push(4); if let Some(x) = v.get(10) { println!("{x}"); } else { println!("越界，但没 panic"); } let mut scores = HashMap::new(); scores.insert(String::from("Alice"), 90); scores.entry(String::from("Bob")).or_insert(80); let alice = scores.get("Alice").copied().unwrap_or(0); println!("Alice: {alice}"); } 常见坑 HashMap::get 返回 Option&lt;&amp;V&gt;：需要 copied()/cloned() 才能得到值类型。 在遍历 Vec 的同时修改它：借用规则会阻止，需要先收集索引或使用 retain/drain。 D3. 闭包（从 trait 视角理解 Fn 家族） 内容介绍 闭包是可以捕获环境的匿名函数。捕获方式决定了闭包实现哪个 trait：Fn（不可变借用捕获）、FnMut（可变借用捕获）、FnOnce（按值捕获，只能调用一次）。 详细描述 自动推断：编译器根据闭包体内对捕获变量的使用方式，选择尽可能少限制的 trait。只读 → Fn；需要修改 → FnMut；需要 move/drop → FnOnce。 move 关键字：强制闭包按值捕获，常用于把闭包发送到线程或从函数返回闭包。 返回闭包：必须用 impl Fn(...) 或 Box&lt;dyn Fn(...)&gt; 作为返回类型，因为闭包类型无法命名。 闭包与 trait bound：接收闭包的泛型函数用 F: Fn(i32) -&gt; i32 约束。 代码示例 fn apply&lt;F: FnOnce()&gt;(f: F) { f(); } fn create_fnmut() -&gt; impl FnMut() { let mut count = 0; move || { count += 1; println!("count = {count}"); } } fn main() { let greeting = "hello"; let mut farewell = "goodbye".to_owned(); let diary = || { println!("{greeting}"); // Fn：不可变借用 farewell.push_str("!!!"); // FnMut：可变借用 println!("{farewell}"); drop(farewell); // FnOnce：按值消费 }; apply(diary); // FnOnce 可以接受 Fn/FnMut 闭包 let mut counter = create_fnmut(); counter(); counter(); } 常见坑 把 FnOnce 闭包传给要求 Fn 的函数：编译错误，因为 FnOnce 可能消费捕获值，不能多次调用。 返回闭包时忘记 move：捕获的局部变量在函数结束后失效，需要 move 把所有权移入闭包。 误以为 move 闭包总是 FnOnce：move 决定如何捕获，Fn 家族由如何使用决定；move 闭包仍可能是 Fn。 D4. 模块与可见性（含 cfg 属性） 内容介绍 模块系统用于组织代码和控制可见性。默认所有项是私有的；pub 及其变体（pub(crate)、pub(super)、pub(in path)）控制项可以被谁访问。 详细描述 默认私有：模块中的函数、结构体、字段默认只有当前模块及子模块可见。 pub 的传播性：一个项要从 crate 外部访问，从根到该项的每一层模块都必须是 pub 的。 pub(crate)：整个 crate 内可见，但不对外暴露；pub(super) 对父模块可见。 pub use 重导出：把内部路径的项以更友好的路径暴露给外部。 #[cfg(...)] 属性：条件编译，常用于 #[cfg(test)] mod tests、#[cfg(target_os = "linux")] 等场景。 代码示例 mod outer { pub mod inner { pub fn public_api() { println!("public"); } fn private_helper() { println!("private"); } } pub(crate) fn crate_only() { println!("crate only"); } } #[cfg(test)] mod tests { #[test] fn it_works() { assert_eq!(2 + 2, 4); } } fn main() { outer::inner::public_api(); // ✅ // outer::inner::private_helper(); // ❌ 私有 outer::crate_only(); // ✅ crate 内可见 } 常见坑 结构体字段默认私有：pub struct 不会让字段自动公开，需要逐个字段加 pub，或提供构造函数。 pub mod 与 pub use 混淆：pub mod 暴露模块路径；pub use 暴露项的重导出路径。 忘了 #[cfg(test)]：测试模块在生产构建中也会被编译，增加二进制体积。 附录：自测清单 主题 自测问题 所有权 let y = x; 之后 x 在什么情况下仍可用？ 借用 为什么“一个可变引用或多个不可变引用”能保证内存安全？ 切片 &amp;[T] 的双字对象分别是什么？ 字符串 函数参数为什么优先写 &amp;str 而不是 &amp;String？ 泛型 不加 PartialOrd bound 时，largest&lt;T&gt; 为什么编译失败？ trait impl Trait 和 dyn Trait 的分发方式有何不同？ 错误处理 ? 在错误分支实际执行了什么转换？ 智能指针 Rc 为什么不能跨线程？Arc 为什么能？ 闭包 move 闭包一定是 FnOnce 吗？ 模块 pub(crate) 与 pub 的可见范围差别是什么？ 最后一点建议：你的列表本身说明你已经摸到了 Rust 的“硬骨头”。接下来最有效的巩固方式不是继续加知识点，而是围绕所有权和借用把代码写到手熟——绝大多数 trait、闭包、错误处理的困惑，最终都会回到“这个值现在归谁、借用关系是否合法”这两个问题上。]]></summary></entry><entry><title type="html">使用 Github Pages 和 Hugo 搭建个人博客</title><link href="https://nekow33.github.io/posts/2024-10-03-github-page-hugo/" rel="alternate" type="text/html" title="使用 Github Pages 和 Hugo 搭建个人博客" /><published>2024-10-03T12:00:00+08:00</published><updated>2024-10-03T12:00:00+08:00</updated><id>https://nekow33.github.io/posts/github-page-hugo</id><content type="html" xml:base="https://nekow33.github.io/posts/2024-10-03-github-page-hugo/"><![CDATA[<h2 id="一创建一个github-pages类型的repo">一、创建一个Github Pages类型的Repo</h2>
 
 <p>在Github上创建一个新的Repository，仓库名称为<code class="language-plaintext highlighter-rouge">xxx.github.io</code>，其中xxx为自定义名称。仓库设置为Public，并且默认添加一个README文件。
 仓库创建好后通过git clone下到本地备用</p>
