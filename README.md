@@ -89,6 +89,7 @@ categories:
 
 - **分类 categories**：一篇放一个（或少数几个），出现在 `/categories/` 聚合页和文章页顶部。
   聚合页里每个分类是一个锚点区块，文章页的分类链接会直接跳到对应位置。
+- **日期**：`date` 只用于文章排序和 URL（`/posts/<日期>-<标题>/`），页面上不显示。
 - **目录 TOC**：默认开启（`_config.yml` 的 `defaults` 里 `toc: true`），由 `assets/js/toc.js`
   从正文的 `##` / `###` 生成；单篇想关掉就写 `toc: false`。
 - **代码高亮**：三个反引号围栏，可加语言名（如 ```python），由 rouge 渲染。
