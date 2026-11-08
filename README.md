@@ -5,9 +5,6 @@ https://nekow33.github.io
 个人博客。**Jekyll 4 + 自带的极简纯文本主题**（layout 和 CSS 都在本仓库里，没有任何第三方主题依赖）：
 等宽字体、白底黑字、窄栏、蓝色下划线链接、已访问链接变紫，文章页左侧固定目录。
 
-> 注：GitHub 账号已从 `hahaws` 改名为 `nekow33`，所以站点地址从 `https://hahaws.github.io`
-> 变成了 `https://nekow33.github.io`。仓库原名 `hahaws.github.io`，已改名为 `nekow33.github.io`。
-
 ## 目录结构
 
 ```
