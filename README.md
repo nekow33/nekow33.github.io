@@ -31,7 +31,6 @@ https://nekow33.github.io
 
 ## 本地预览
 
-需要 Ruby 3.x（Arch 上是 `sudo pacman -S ruby ruby-bundled-gems`）：
 
 ```bash
 bundle install
@@ -39,8 +38,9 @@ bundle exec jekyll serve
 # 打开 http://127.0.0.1:4000
 ```
 
-> Gemfile 里显式声明了 `csv` / `logger` / `bigdecimal`，因为 Ruby 3.4 把它们从默认 gem
-> 降级为 bundled gem，不声明会导致 Jekyll 起不来。
+> 需要 Ruby 3.x（Arch 上是 `sudo pacman -S ruby ruby-bundled-gems`）：
+> 如果执行`bundle install`失败，检查是否安装了基础编译环境`base-devel`
+> 需要在仓库根目录执行，不要在里面的目录执行，会执行失败
 
 ## 写一篇新文章
 
