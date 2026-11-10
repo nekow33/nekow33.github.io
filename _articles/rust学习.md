@@ -1,5 +1,5 @@
 ---
-title: Rust学习
+title: "[Rust学习]核心知识点"
 date: 2026-11-03 21:00:00 +0800
 categories:
   - Rust
