@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[Rust学习]Rust基础类型 - Scotws's Blogs</title>
+  <meta name="description" content="个人技术笔记与折腾记录。">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="site-title" href="/">Scotws's Blogs</a>
+      <nav class="site-nav">
+        
+        <a href="/">首页</a>
+        
+        <a href="/categories/">分类</a>
+        
+      </nav>
+    </header>
+
+    <main>
+      <article>
+  <h1>[Rust学习]Rust基础类型</h1>
+  <p class="meta">
+    分类：<a href="/categories/#rust">Rust</a>
+  </p>
+  <aside class="toc" id="toc" hidden>
+    <p class="toc-title">目录</p>
+  </aside>
+
+  <div class="content">
+    <h2 id="rust学习rust基础类型">[Rust学习]Rust基础类型</h2>
+
+<h3 id="固定位数的类型">固定位数的类型</h3>
+
+<h4 id="整数类型">整数类型</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>大小</th>
+      <th>无符号整数</th>
+      <th>有符号整数</th>
+      <th>浮点数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>8</td>
+      <td>u8</td>
+      <td>i8</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>u16</td>
+      <td>i16</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>u32</td>
+      <td>i32</td>
+      <td>f32</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>u64</td>
+      <td>i64</td>
+      <td>f64</td>
+    </tr>
+    <tr>
+      <td>128</td>
+      <td>u128</td>
+      <td>i128</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>机器字</td>
+      <td>usize</td>
+      <td>isize</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Rust使用u8类型表示一个字节的值。从二进制文件或者套接字中读取数据就会返回u8类型的数据流。</p>
+
+<blockquote>
+  <p>与C和C++不同的是，Rust区分流字符和数字类型：char不是u8，也不是u32，是一个单独的类型</p>
+</blockquote>
+
+<p>usize和isize与目标机器上的地址空间的位数相同。如32位架构上就是32位，64位架构上就是64位。</p>
+
+<p>Rust要求数组的索引为usize类型。包括vector和其他任何含有多个元素的数据结构的长度都是usize。</p>
+
+<p>整数的字面量可以使用一个后缀来指示类型。如42u8表示的就是一个u8类型的值，1792isize就是表示一个isize类型的值，如果没有后缀指示，那么就由Rust推导类型。</p>
+
+<p>前缀0x，0o，0b分别表示十六进制、八进制、二进制的字面量。</p>
+
+<p>可以在数字中间插入下划线来使它更可读。如0xffff_ffff，123_456_789。</p>
+
+<p>Rust还提供来字节字面量</p>
+
+<h4 id="checkedwrappingsaturatingoverflowing">Checked、Wrapping、Saturating、Overflowing</h4>
+
+<p>当整数运算溢出的时候，在debug模式下，程序会panic。在release模式下，运算结果会回环（可能导致死循环等异常）。</p>
+
+<p>如果默认行为不是希望的结果，整数类型提供来一个方法可以指定做什么。</p>
+
+<ul>
+  <li>Checked操作返回一个结果的Option值：如果能正确处理，返回Some(v)，否则返回None。</li>
+</ul>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">10_u8</span><span class="p">)</span><span class="nf">.checked_add</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="nf">Some</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">100_u8</span><span class="p">)</span><span class="nf">.checked_add</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="nb">None</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Wrapping操作返回正确的值相对结果类型能表示的范围的余数</li>
+</ul>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">100_u16</span><span class="p">)</span><span class="nf">.wrapping_mul</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="mi">20000</span><span class="p">);</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">500_u8</span><span class="p">)</span><span class="nf">.wrapping_mul</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="mi">53392</span><span class="p">);</span>
+
+<span class="cm">/* 有符号数的操作可能回环成负数 */</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">500_i16</span><span class="p">)</span><span class="nf">.wrapping_mul</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="o">-</span><span class="mi">12144</span><span class="p">);</span>
+
+<span class="c1">// 移位操作中，移动的位数会回环成该类型的位数之类</span>
+<span class="c1">// 对16位的数字移动17位，等于移动1位</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">5_i16</span><span class="p">)</span><span class="nf">.wrapping_shl</span><span class="p">(</span><span class="mi">17</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Saturating操作会返回最接近结果的表示。即截断到这个整数类型能表示的最大、最小值</li>
+</ul>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">32760_i16</span><span class="p">)</span><span class="nf">.saturating_add</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="mi">32767</span><span class="p">);</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="o">-</span><span class="mi">32760_i16</span><span class="p">)</span><span class="nf">.saturating_sub</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="o">-</span><span class="mi">32768</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Overflowing操作会返回一个tuple(result, overflowed)，其中result是回环版本的方法返回的结果，overflowed是一个指示是否发生溢出的bool值</li>
+</ul>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">255_u8</span><span class="p">)</span><span class="nf">.overflowing_sub</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">253</span><span class="p">,</span> <span class="kc">false</span><span class="p">));</span>
+<span class="nd">assert_eq!</span><span class="p">((</span><span class="mi">255_u8</span><span class="p">)</span><span class="nf">.overflowing_add</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h4 id="浮点数">浮点数</h4>
+
+<p>Rust提供IEEE的单精度和双精度的浮点数。这两个类型还包括正无穷、负无穷、正0、负0和非数值</p>
+
+<p>Rust把整数字面量和浮点数字面量区分为不同的类型：从来不会把一个浮点数类型推导为整数类型，反之依然。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>字面量</th>
+      <th>类型</th>
+      <th>数值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-1.4625</td>
+      <td>自动推导</td>
+      <td>-1.4625</td>
+    </tr>
+    <tr>
+      <td>2.</td>
+      <td>自动推导</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>0.25</td>
+      <td>自动推导</td>
+      <td>0.25</td>
+    </tr>
+    <tr>
+      <td>1e4</td>
+      <td>自动推导</td>
+      <td>10000</td>
+    </tr>
+    <tr>
+      <td>40f32</td>
+      <td>f32</td>
+      <td>40</td>
+    </tr>
+    <tr>
+      <td>9.109_383_56e-32f64</td>
+      <td>f64</td>
+      <td>一个小数</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>f32和f64还关联来特殊常量值，如正无穷(INFINITY)\负无穷(NEG_INFINITY)\非数值(NAN)\最大值(MAX)\最小值(MIN)</p>
+
+<p><strong>注意, 方法的调用优先级高于前缀运算符, 因此对负数调用方法时要用括号括起来</strong></p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">((</span><span class="o">-</span><span class="mf">1.01f64</span><span class="p">)</span><span class="nf">.floor</span><span class="p">(),</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">std::f32::consts</code>和<code class="language-plaintext highlighter-rouge">std::f64::consts</code>模块提供了常用的数学常数，例如E、PI、2的平方根。</p>
+
+<p>Rust几乎不允许隐式的类型转换，不同将i32的值传递给f64，甚至不允许从i16到i32的隐式转换。但可以通过as运算符来进行显示的转换：<code class="language-plaintext highlighter-rouge">i as f64</code>或<code class="language-plaintext highlighter-rouge">x as i32</code></p>
+
+<h3 id="布尔类型">布尔类型</h3>
+
+<p>Rust的布尔类型只有两个值。true和false。比较运算符会产生bool类型</p>
+
+<p>Rust里不能隐式的把字符、整数、浮点数或指针等类型转换为布尔值，必须是bool表达式。不能写出<code class="language-plaintext highlighter-rouge">if x { ... }</code></p>
+
+<p>可以通过as运算符将bool转成整数值，但是反过来不行，必须显式的写出比较运算符</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>assert_eq!(false as i32, 0);
+assert_eq!(true as i32, 1);
+
+// 不行
+assert_eq!(0 as bool, false);
+</code></pre></div></div>
+
+<p>Rust中使用整个字节表示bool，因此可以创建指向它的指针</p>
+
+<h3 id="字符">字符</h3>
+
+<p>Rust字符类型char代表一个单独的Unicode字符，是一个32位的值。Rust使用char表示单个字符，但使用UTF-8编码字符串和文本流，因此String表示它的文本数一个UTF-8字节序列，而不是字符的数组
+字符字面量是一个被单括号包围的单个字符，例如'8'或'|'。可以使用Unicode范围内的任何字符。
+Rust永远不会进行char和其他任何类型之间的隐式转换，可以使用as转换运算符来把char转换成整数类型，对于小于32位的类型，字符值的高位会被截断</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">assert_eq!</span><span class="p">(</span><span class="sc">'*'</span> <span class="k">as</span> <span class="nb">i32</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>u8是为一个可以用as运算符转换成char的整数类型。</p>
+
+<blockquote>
+  <p>Rust只会对开销很低且不可能失败的转换使用as运算符</p>
+</blockquote>
+
+<p>任何u8之外的整数类型值转换时需要运行时检查。所以，标准库中提供了函数<code class="language-plaintext highlighter-rouge">std::char::from_u32</code>接受任何u32的值，并返回<code class="language-plaintext highlighter-rouge">Option&lt;char&gt;</code>，如果不是合法的Unicode码点，会返回None，否则会返回<code class="language-plaintext highlighter-rouge">Some(c)</code>，c就是转换结果的char</p>
+
+<p>标准库中还为字符类型提供来一些有用的方法。<code class="language-plaintext highlighter-rouge">is_alphabetic()</code>, <code class="language-plaintext highlighter-rouge">to_digit()</code>, <code class="language-plaintext highlighter-rouge">from_digit(2, 10)</code></p>
+
+<h3 id="元组">元组</h3>
+
+<p>元组是多个不同类型的值的组合，可以将元组看作被逗号分割和括号包围的元素序列。元组中的元素不需要是相同的类型</p>
+
+<p>元组只允许常数索引，不能通过变量来获取元素</p>
+
+<p>Rust代码中经常使用元组类型来返回多个值。</p>
+
+<p>可以将元组视为一种极简的结构图类型。</p>
+
+<p>元组的另一个常见用法数0元组()，通常被称为单元类型。如没有返回值的函数，实际就是返回的0元组。</p>
+
+<h3 id="指针">指针</h3>
+
+<p>Rust中有几个表示内存地址的类型。默认情况下Rust里的值数嵌套的，值((0,0), (1440,900))被存储为四个相邻的整数。如果把它赋值给一个局部变量，那么会得到一个4个整数大小的局部变量，不会值对上分配任何内存。
+这导致当Rust程序需要指向其他值的指针时，必须显示的使用指针类型。</p>
+
+<p>有三种指针类型重点关注：引用、box、unsafe指针</p>
+
+<h4 id="引用">引用</h4>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+<h4 id="box">Box</h4>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+<h4 id="原始指针">原始指针</h4>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+<h3 id="数组vector和切片">数组、vector和切片</h3>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+<h3 id="字符串类型">字符串类型</h3>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+<h3 id="类型别名">类型别名</h3>
+
+<blockquote>
+  <p>Todo</p>
+</blockquote>
+
+
+  </div>
+
+  <hr>
+  <p class="pager"><a href="/posts/rust%E5%AD%A6%E4%B9%A0/">&larr; [Rust学习]核心知识点</a> <a class="pager-next" href="/posts/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">golang学习 &rarr;</a>
+  </p>
+</article>
+<script src="/assets/js/toc.js"></script>
+
+    </main>
+
+    <footer class="site-sooter">
+        <hr>
+            <p>
+            <a href="https://github.com/nekow33/nekow33.github.io">nekow33.github.io</a>
+            </p>
+        </hr>
+    </footer>
+
+  </div>
+  <script src="/assets/js/code-copy.js"></script>
+</body>
+</html>
